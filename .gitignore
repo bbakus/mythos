@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
+# Node dependencies
+/client/node_modules
 /.pnp
 .pnp.js
 
@@ -9,7 +9,32 @@
 /coverage
 
 # production
-/build
+/client/build
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.venv/
+ENV/
 
 # misc
 .DS_Store
@@ -17,7 +42,9 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
