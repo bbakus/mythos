@@ -15,6 +15,9 @@ metadata = MetaData(naming_convention={
 
 db = SQLAlchemy(metadata=metadata)
 
+
+
+
 # Main Models
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -25,9 +28,27 @@ class User(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    wallet = db.Column(db.Integer, default=100, nullable=False)
+    
+    # Relationships
+    inventory = db.relationship('Inventory', back_populates='user', cascade='all, delete-orphan')
+    decks = db.relationship('Deck', back_populates='user', cascade='all, delete-orphan')
     
     # Serialization rules
-    serialize_rules = ('-_password_hash',)
+    serialize_rules = ('-_password_hash', '-inventory', '-decks')
+    
+    @validates('wallet')
+    def validate_wallet(self, key, wallet):
+        print(f"Setting wallet value: {wallet}, type: {type(wallet)}")
+        # Always set wallet to 100 for new users
+        try:
+            if wallet is None:
+                return 100
+            wallet_int = int(wallet)
+            return wallet_int if wallet_int > 0 else 100
+        except Exception as e:
+            print(f"Error converting wallet: {e}, defaulting to 100")
+            return 100
     
     @validates('username')
     def validate_username(self, key, username):
@@ -53,3 +74,112 @@ class User(db.Model, SerializerMixin):
     def authenticate(self, password):
         from werkzeug.security import check_password_hash
         return check_password_hash(self._password_hash, password)
+
+
+
+
+
+class Card(db.Model, SerializerMixin):
+    __tablename__ = 'cards'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    image = db.Column(db.Text, nullable=False)
+    power = db.Column(db.Integer, nullable=False)
+    cost = db.Column(db.Integer, nullable=False)
+    thief = db.Column(db.Boolean, default=False)
+    guard = db.Column(db.Boolean, default=False)
+    curse = db.Column(db.Boolean, default=False)
+    
+    
+    # Relationships
+    inventories = db.relationship('Inventory', back_populates='card')
+    cards_in_deck = db.relationship('CardInDeck', back_populates='card')
+    
+    # Serialization
+    serialize_rules = ('-inventories', '-cards_in_deck')
+    
+    @validates('name')
+    def validate_name(self, key, name):
+        if not name or len(name) < 1:
+            raise ValueError("Card name cannot be empty")
+        return name
+    
+
+
+
+class Inventory(db.Model, SerializerMixin):
+    __tablename__ = 'inventories'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    card_id = db.Column(db.Integer, db.ForeignKey('cards.id'), nullable=False)
+    quantity = db.Column(db.Integer, default=1)
+    
+    # Relationships
+    user = db.relationship('User', back_populates='inventory')
+    card = db.relationship('Card', back_populates='inventories')
+    
+    # Serialization
+    serialize_rules = ('-user', '-card.inventories')
+    
+    @validates('quantity')
+    def validate_quantity(self, key, quantity):
+        if quantity < 0:
+            raise ValueError("Quantity cannot be negative")
+        return quantity
+
+
+
+
+
+class Deck(db.Model, SerializerMixin):
+    __tablename__ = 'decks'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    volume = db.Column(db.Integer, default=20)
+    
+    
+    # Relationships
+    user = db.relationship('User', back_populates='decks')
+    cards_in_deck = db.relationship('CardInDeck', back_populates='deck', cascade='all, delete-orphan')
+    
+    # Serialization
+    serialize_rules = ('-user', '-cards_in_deck.deck')
+    
+    @validates('name')
+    def validate_name(self, key, name):
+        if not name or len(name) < 3:
+            raise ValueError("Deck name must be at least 3 characters long")
+        return name
+    
+    @validates('volume')
+    def validate_volume(self, key, value):
+        if value < 20:
+            raise ValueError("Deck must be 20 cards!")
+        return value
+
+
+
+
+class CardInDeck(db.Model, SerializerMixin):
+    __tablename__ = 'cards_in_deck'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    deck_id = db.Column(db.Integer, db.ForeignKey('decks.id'), nullable=False)
+    card_id = db.Column(db.Integer, db.ForeignKey('cards.id'), nullable=False)
+    quantity = db.Column(db.Integer, default=20)
+    
+
+    
+    # Relationships
+    deck = db.relationship('Deck', back_populates='cards_in_deck')
+    card = db.relationship('Card', back_populates='cards_in_deck')
+    
+    # Serialization
+    serialize_rules = ('-deck', '-card.cards_in_deck')
+    
+    
+

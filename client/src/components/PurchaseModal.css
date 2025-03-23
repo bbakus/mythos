@@ -1,0 +1,139 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.purchase-modal {
+  background: #111;
+  border: 2px solid #e94560;
+  border-radius: 12px;
+  padding: 35px;
+  max-width: 1200px;
+  width: 95%;
+  box-shadow: 0 8px 24px rgba(233, 69, 96, 0.3);
+  animation: modal-appear 0.3s ease-out;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.modal-content h2 {
+  color: #f9d671;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-family: 'RomanAntique', serif;
+  font-size: 2.2rem;
+}
+
+.modal-content p {
+  color: #fff;
+  font-size: 1.4rem;
+  margin-bottom: 25px;
+}
+
+.card-name {
+  color: #e94560;
+  font-weight: bold;
+}
+
+.modal-image-container {
+  width: 280px;
+  margin: 15px auto 25px;
+}
+
+.modal-card-image {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.modal-card-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(233, 69, 96, 0.4);
+}
+
+.modal-close-btn {
+  background: linear-gradient(135deg, #e94560, #c21e56);
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  margin-top: 15px;
+}
+
+.modal-close-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #f04d68, #d12260);
+}
+
+.modal-close-btn:active {
+  transform: translateY(1px);
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-multiple-images {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 25px;
+  margin: 20px 0 30px;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 15px;
+}
+
+.modal-multiple-images .modal-image-container {
+  width: 200px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.modal-multiple-images .modal-image-container:hover {
+  transform: translateY(-5px);
+}
+
+.modal-card-name {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  color: #e94560;
+  text-align: center;
+  font-weight: bold;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+} 

@@ -1,0 +1,27 @@
+
+
+
+MYTHOS GAME RULES BRAINSTORM
+
+
+
+- Only one metric, Power, any spillover of damage goes to the opponent, or they can attack directly if unopposed
+
+3 card slots per player, player draws 3 cards per turn
+
+each turn you have 4 points to spend, the cost of creatures is in the bottom right.
+any points not spent will carry over to the next turn.
+player can retain one card per hand, next turn they only draw 2
+both players draw at the same time, and take turns placing cards 1 by 1, back and forth until they are finished or their side of the board is full.
+whoever placed first gets to have their attack turn first, and then the opponents attack turn ensues. damage is calculated on each attack turn
+
+
+= 30 LP per player?? Maybe more, we'll need to test it out
+
+- THEIF attribute, on your attack turn a card with this keyword can attack opponent directly, bypassing engagement with opposing creature. Only applicable on your own attack turn
+
+- GUARD attribute, allows creature to take incoming blows from attacking cards that target creatures they are adjacent too. Guard has the clause of 'retire', after two protections the creature is discarded from the board. Guard can also block theif attacks and maybe nullifies curse??
+
+- CURSE attribute, if a creature with this keyword destroys an opponent creature, it does the full weight of it's power as damage, a card that activates it's curse is then discarded.
+
+- HEAVY for units with power over 20, not a keyword, but an attribute. Heavy creatures can be blocked by opponent creatures one space away.

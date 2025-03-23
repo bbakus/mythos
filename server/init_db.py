@@ -3,25 +3,25 @@
 import os
 import sys
 
-# Add the parent directory to sys.path
+# Add the parent directory to sys.path to enable absolute imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from server.app import app, db
-from flask_migrate import upgrade, migrate, init, stamp
+# Use absolute imports
+from flask import Flask
+from server.models import db, User, Card, Inventory, Deck, CardInDeck
+from server.config import Config
 
-def init_db():
-    """Initialize the database with migrations."""
-    with app.app_context():
-        # Create the migrations directory if it doesn't exist
-        if not os.path.exists("server/migrations"):
-            print("Initializing migrations directory...")
-            init()
-            stamp()
-        
-        # Create database tables
-        print("Creating database tables...")
-        db.create_all()
-        print("Database tables created successfully!")
+app = Flask(__name__)
+app.config.from_object(Config)
+db.init_app(app)
 
-if __name__ == "__main__":
-    init_db() 
+with app.app_context():
+    # Drop all existing tables
+    print("Dropping all existing tables...")
+    db.drop_all()
+    
+    # Create tables from the original models
+    print("Creating new tables...")
+    db.create_all()
+    
+    print("Database initialization complete!") 

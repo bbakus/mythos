@@ -1,0 +1,227 @@
+.inventory-container {
+  background-color: #1a1a1a;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Wrap inventory items in a grid container */
+.inventory-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* Make non-card elements span the full width */
+.inventory-container > .nav-bar,
+.inventory-container > h1,
+.inventory-container > h2 {
+  grid-column: 1 / -1;
+}
+
+/* Navigation bar styles - consistent with marketplace */
+.nav-bar {
+  display: flex;
+  justify-content: space-around;
+  background-color: #111;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nav-bar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.7rem;
+  font-family: 'RomanAntique', 'Times New Roman', serif;
+  padding: 8px 15px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.nav-bar a:hover {
+  color: #f9d671;
+  transform: translateY(-2px);
+}
+
+.nav-bar a.active {
+  background: linear-gradient(135deg, #e94560, #c21e56);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* User info styles */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  background-color: #222;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  grid-column: 1 / -1;
+}
+
+.user-info p {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #f9d671;
+}
+
+.error-message {
+  color: #e94560;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Inventory header */
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  grid-column: 1 / -1;
+}
+
+.inventory-header h1 {
+  color: #f9d671;
+  font-family: 'RomanAntique', serif;
+  margin: 0;
+}
+
+.deck-builder-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.deck-builder-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading and empty states */
+.loading, .empty-inventory {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #ccc;
+  grid-column: 1 / -1;
+}
+
+.empty-inventory p {
+  margin-bottom: 20px;
+}
+
+.marketplace-link {
+  display: inline-block;
+  background: linear-gradient(135deg, #e94560, #c21e56);
+  color: white;
+  padding: 10px 25px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.marketplace-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-container {
+  background-color: #222;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-container p {
+  padding: 10px;
+  margin: 0;
+  text-align: center;
+}
+
+.card-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.card-container.selected {
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 15px #4CAF50;
+}
+
+.card-details {
+  padding: 10px;
+  background-color: #2a2a2a;
+  text-align: center;
+}
+
+.card-name {
+  color: #f9d671;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-power, .card-cost, .card-quantity {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.card-power {
+  color: #e94560;
+}
+
+.card-cost {
+  color: #4bb4de;
+}
+
+/* Media queries for responsive grid */
+@media (max-width: 1200px) {
+  .inventory-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .inventory-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .inventory-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-family: 'RomanAntique', 'Times New Roman', serif;
+  margin-bottom: 20px;
+  color: #f8d8a8;
+  text-align: center;
+} 

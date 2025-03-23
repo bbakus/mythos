@@ -1,0 +1,723 @@
+[
+    {
+        "name": "Akhlut",
+        "image": "/assets/images/finished_cards/AKHLUT.png",
+        "power": 14,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Ammit",
+        "image": "/assets/images/finished_cards/AMMIT.png",
+        "power": 6,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Anubis",
+        "image": "/assets/images/finished_cards/ANUBIS.png",
+        "power": 16,
+        "cost": 3,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Bake-Kujira",
+        "image": "/assets/images/finished_cards/BAKE_KUJIRA.png",
+        "power": 25,
+        "cost": 5,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Basan",
+        "image": "/assets/images/finished_cards/BASAN.png",
+        "power": 6,
+        "cost": 1,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Basilisk",
+        "image": "/assets/images/finished_cards/BASILISK.png",
+        "power": 26,
+        "cost": 6,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Behemoth",
+        "image": "/assets/images/finished_cards/BEHEMOTH.png",
+        "power": 29,
+        "cost": 7,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Belliegha",
+        "image": "/assets/images/finished_cards/BELLIEGHA.png",
+        "power": 12,
+        "cost": 2,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Bjarndýrakóngur",
+        "image": "/assets/images/finished_cards/BJARNDYRAKONGUR.png",
+        "power": 16,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Black Dragon",
+        "image": "/assets/images/finished_cards/BLACK_DRAGON.png",
+        "power": 14,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Blue Dragon",
+        "image": "/assets/images/finished_cards/BLUE_DRAGON.png",
+        "power": 17,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Cactus Cat",
+        "image": "/assets/images/finished_cards/CACTUS_CAT.png",
+        "power": 7,
+        "cost": 1,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Camazotz",
+        "image": "/assets/images/finished_cards/CAMAZOTZ.png",
+        "power": 8,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Cerberus",
+        "image": "/assets/images/finished_cards/CERBERUS.png",
+        "power": 20,
+        "cost": 3,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Chimera",
+        "image": "/assets/images/finished_cards/CHIMERA.png",
+        "power": 23,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Chupacabra",
+        "image": "/assets/images/finished_cards/CHUPACABRA.png",
+        "power": 4,
+        "cost": 1,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Cyclops",
+        "image": "/assets/images/finished_cards/CYCLOPS.png",
+        "power": 13,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Draugr",
+        "image": "/assets/images/finished_cards/DRAUGR.png",
+        "power": 8,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Fenrir",
+        "image": "/assets/images/finished_cards/FENRIR.png",
+        "power": 15,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Fire Titan",
+        "image": "/assets/images/finished_cards/FIRE_TITAN.png",
+        "power": 21,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Gandabherunda",
+        "image": "/assets/images/finished_cards/GANDABHERUNDA.png",
+        "power": 17,
+        "cost": 3,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Green Dragon",
+        "image": "/assets/images/finished_cards/GREEN_DRAGON.png",
+        "power": 13,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Gryffin",
+        "image": "/assets/images/finished_cards/GRYFFIN.png",
+        "power": 9,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Harpy",
+        "image": "/assets/images/finished_cards/HARPY.png",
+        "power": 7,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Hecatonchieres",
+        "image": "/assets/images/finished_cards/HECATONCHIERES.png",
+        "power": 26,
+        "cost": 5,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Hydra",
+        "image": "/assets/images/finished_cards/HYDRA.png",
+        "power": 29,
+        "cost": 8,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Ice Titan",
+        "image": "/assets/images/finished_cards/ICE_TITAN.png",
+        "power": 20,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Isonade",
+        "image": "/assets/images/finished_cards/ISONADE.png",
+        "power": 13,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Jackalope",
+        "image": "/assets/images/finished_cards/JACKALOPE.png",
+        "power": 4,
+        "cost": 1,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Jörmungandr",
+        "image": "/assets/images/finished_cards/JORMUNGANDR.png",
+        "power": 31,
+        "cost": 7,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Jorogumo",
+        "image": "/assets/images/finished_cards/JOROGUMO.png",
+        "power": 11,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Karkinos",
+        "image": "/assets/images/finished_cards/KARKINOS.png",
+        "power": 22,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Kishi",
+        "image": "/assets/images/finished_cards/KISHI.png",
+        "power": 14,
+        "cost": 4,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Kraken",
+        "image": "/assets/images/finished_cards/KRAKEN.png",
+        "power": 24,
+        "cost": 6,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Kujata",
+        "image": "/assets/images/finished_cards/KUJATA.png",
+        "power": 15,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Nessie",
+        "image": "/assets/images/finished_cards/LOCH_NESS_MONSTER.png",
+        "power": 17,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Man-Ont",
+        "image": "/assets/images/finished_cards/MAN_ONT.png",
+        "power": 12,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Manticore",
+        "image": "/assets/images/finished_cards/MANTICORE.png",
+        "power": 11,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Medusa",
+        "image": "/assets/images/finished_cards/MEDUSA.png",
+        "power": 12,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Minotaur",
+        "image": "/assets/images/finished_cards/MINOTAUR.png",
+        "power": 10,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Nemean Lion",
+        "image": "/assets/images/finished_cards/NEMEAN_LION.png",
+        "power": 15,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Nuckalavee",
+        "image": "/assets/images/finished_cards/NUCKALAVEE.png",
+        "power": 18,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Pabilsag",
+        "image": "/assets/images/finished_cards/PABILSAG.png",
+        "power": 12,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Pamola",
+        "image": "/assets/images/finished_cards/PAMOLA.png",
+        "power": 16,
+        "cost": 3,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Pegasus",
+        "image": "/assets/images/finished_cards/PEGASUS.png",
+        "power": 12,
+        "cost": 2,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Phoenix",
+        "image": "/assets/images/finished_cards/PHOENIX.png",
+        "power": 14,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Siren",
+        "image": "/assets/images/finished_cards/SIREN.png",
+        "power": 6,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Skvader",
+        "image": "/assets/images/finished_cards/SKVADER.png",
+        "power": 5,
+        "cost": 1,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Sky Fox",
+        "image": "/assets/images/finished_cards/SKY_FOX.png",
+        "power": 9,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Sleipnir",
+        "image": "/assets/images/finished_cards/SLEIPNIR.png",
+        "power": 8,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Sphinx",
+        "image": "/assets/images/finished_cards/SPHINX.png",
+        "power": 12,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "STRIX",
+        "image": "/assets/images/finished_cards/STRIX.png",
+        "power": 15,
+        "cost": 3,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Thunder Bird",
+        "image": "/assets/images/finished_cards/THUNDER_BIRD.png",
+        "power": 16,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Typhon",
+        "image": "/assets/images/finished_cards/TYPHON.png",
+        "power": 25,
+        "cost": 5,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Vucub Caquix",
+        "image": "/assets/images/finished_cards/VUCUB_CAQUIX.png",
+        "power": 17,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Wampus Cat",
+        "image": "/assets/images/finished_cards/WAMPUS_CAT.png",
+        "power": 11,
+        "cost": 2,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Wendigo",
+        "image": "/assets/images/finished_cards/WENDIGO.png",
+        "power": 21,
+        "cost": 4,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "White Tiger",
+        "image": "/assets/images/finished_cards/WHITE_TIGER.png",
+        "power": 14,
+        "cost": 2,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Yatagarasu",
+        "image": "/assets/images/finished_cards/YATAGARASU.png",
+        "power": 10,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Yeti",
+        "image": "/assets/images/finished_cards/YETI.png",
+        "power": 23,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Abu Rigk Maslukah",
+        "image": "/assets/images/finished_cards_2/ABU_RIGL_MASLUKAH.png",
+        "power": 11,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Alp",
+        "image": "/assets/images/finished_cards_2/ALP.png",
+        "power": 8,
+        "cost": 1,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Bai Ze",
+        "image": "/assets/images/finished_cards_2/BAI_ZE.png",
+        "power": 24,
+        "cost": 5,
+        "thief": false,
+        "guard": true,
+        "curse": false
+    },
+    {
+        "name": "Banshee",
+        "image": "/assets/images/finished_cards_2/BANSHEE.png",
+        "power": 14,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Bauk",
+        "image": "/assets/images/finished_cards_2/BAUK.png",
+        "power": 9,
+        "cost": 1,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Cuca",
+        "image": "/assets/images/finished_cards_2/CUCA.png",
+        "power": 16,
+        "cost": 4,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "El Cuco",
+        "image": "/assets/images/finished_cards_2/EL_CUCO.png",
+        "power": 18,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Frog Man",
+        "image": "/assets/images/finished_cards_2/FROG_MAN.png",
+        "power": 6,
+        "cost": 1,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Gashadokuro",
+        "image": "/assets/images/finished_cards_2/GASHADOKURO.png",
+        "power": 23,
+        "cost": 6,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Gurumapa",
+        "image": "/assets/images/finished_cards_2/GURUMAPA.png",
+        "power": 15,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Hodag",
+        "image": "/assets/images/finished_cards_2/HODAG.png",
+        "power": 14,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Jersey Devil",
+        "image": "/assets/images/finished_cards_2/JERSEY_DEVIL.png",
+        "power": 19,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Kelpie",
+        "image": "/assets/images/finished_cards_2/KELPIE.png",
+        "power": 12,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "LAMASHTU",
+        "image": "/assets/images/finished_cards_2/BANSHEE.png",
+        "power": 20,
+        "cost": 6,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Nalia",
+        "image": "/assets/images/finished_cards_2/NALIA.png",
+        "power": 22,
+        "cost": 4,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Nian Beast",
+        "image": "/assets/images/finished_cards_2/NIAN_BEAST.png",
+        "power": 19,
+        "cost": 3,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Penanggalan",
+        "image": "/assets/images/finished_cards_2/PENANGGALAN.png",
+        "power": 13,
+        "cost": 2,
+        "thief": false,
+        "guard": false,
+        "curse": true
+    },
+    {
+        "name": "Qalupalik",
+        "image": "/assets/images/finished_cards_2/QALUPALIK.png",
+        "power": 14,
+        "cost": 3,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Sumaje",
+        "image": "/assets/images/finished_cards_2/SUMAJE.png",
+        "power": 25,
+        "cost": 5,
+        "thief": false,
+        "guard": false,
+        "curse": false
+    },
+    {
+        "name": "Yee Naaldlooshii",
+        "image": "/assets/images/finished_cards_2/YEE_NAALDLOOSHII.png",
+        "power": 10,
+        "cost": 2,
+        "thief": true,
+        "guard": false,
+        "curse": false
+    }
+    
+]
