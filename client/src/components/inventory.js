@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import './inventory.css';
+import '../styles/inventory.css';
 import DeckModal from './DeckModal';
 
 function Inventory(){

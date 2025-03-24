@@ -55,10 +55,7 @@ class Users(Resource):
                 print(f"Error setting password: {str(e)}")
                 return {'error': f'Password error: {str(e)}'}, 400
             
-            # Explicitly set wallet to 100
-            new_user.wallet = 100
-            print(f"Setting wallet to 100, current value: {new_user.wallet}")
-            
+            # Let the validator handle the initial wallet value
             print("Adding user to database session")
             db.session.add(new_user)
             
@@ -68,18 +65,6 @@ class Users(Resource):
                 
                 # Verify wallet was set
                 print(f"User created with wallet: {new_user.wallet}")
-                
-                # If wallet is still None, update it directly with raw SQL
-                if new_user.wallet is None:
-                    print("Wallet still None, updating directly with SQL")
-                    db.session.execute(
-                        "UPDATE users SET wallet = 100 WHERE id = :id",
-                        {"id": new_user.id}
-                    )
-                    db.session.commit()
-                    # Reload the user to get updated wallet
-                    new_user = User.query.get(new_user.id)
-                    print(f"After SQL update, wallet is: {new_user.wallet}")
                 
                 print(f"User created successfully with ID: {new_user.id}")
             except Exception as e:
@@ -113,17 +98,26 @@ class UserById(Resource):
             return {'error': 'User not found'}, 404
         
         data = request.get_json()
+        print(f"PATCH request for user {id}, data:", data)
         
         try:
             for attr in data:
                 if attr == 'password':
                     user.password_hash = data['password']
+                elif attr == 'wallet':
+                    # Handle wallet updates through the validator
+                    print(f"Updating wallet from {user.wallet} to {data['wallet']}")
+                    # Convert to int first to ensure proper validation
+                    wallet_value = int(data['wallet'])
+                    user.wallet = wallet_value
+                    print(f"Wallet after update: {user.wallet}")
                 else:
                     setattr(user, attr, data[attr])
             
             db.session.commit()
             return user.to_dict(), 200
         except Exception as e:
+            print(f"Error in PATCH: {str(e)}")
             return {'error': str(e)}, 400
     
     def delete(self, id):

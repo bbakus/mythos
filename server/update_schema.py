@@ -14,12 +14,14 @@ def update_schema():
         print('Updating database schema...')
         db.create_all()
         
-        # Ensure all users have wallet values
+        # Only set wallet to 100 for new users (where wallet is None)
         users = User.query.all()
         for user in users:
             if user.wallet is None:
-                print(f"Setting wallet for user {user.username}")
-                user.wallet = 100
+                print(f"Setting initial wallet for new user {user.username}")
+                user.wallet = 100  # Set to 100 for new users
+            else:
+                print(f"User {user.username}: wallet = {user.wallet}")
         
         db.session.commit()
         print('Schema update complete!')

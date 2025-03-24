@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from "react";
 import { useLocation, useParams, Link } from 'react-router-dom';
 import PurchaseModal from './PurchaseModal';
-import './marketplace.css'; // We'll create this CSS file next
+import '../styles/marketplace.css'; // We'll create this CSS file next
 
 function Marketplace(){
     // Get the userId from URL params
     const { userId } = useParams();
     
     const location = useLocation();
-    // Get user data from state or initialize to empty object with default wallet
+    // Get user data from state or initialize to empty object
     const initialUserData = location.state?.user || {};
     
     const [cards, setCards] = useState([])
@@ -17,9 +17,9 @@ function Marketplace(){
     const [mysteryCardImage, setMysteryCardImage] = useState([])
     const [boosterPack, setBoosterPack] = useState([]);
     const [showBoosterPack, setShowBoosterPack] = useState(true);
-    const [wallet, setWallet] = useState(initialUserData.wallet || 100);
+    const [wallet, setWallet] = useState(initialUserData.wallet);
     const [error, setError] = useState("");
-    const [user, setUser] = useState({...initialUserData, wallet: initialUserData.wallet || 100});
+    const [user, setUser] = useState(initialUserData);
     const [cardPrices, setCardPrices] = useState({});
     
     // Add modal state
@@ -47,13 +47,6 @@ function Marketplace(){
             isOpen: false
         });
     };
-
-    // Force wallet to never be null
-    useEffect(() => {
-        if (wallet === null || wallet === undefined) {
-            setWallet(100);
-        }
-    }, [wallet]);
     
     // Try to get user data from localStorage first, then fall back to API if needed
     useEffect(() => {
@@ -63,16 +56,8 @@ function Marketplace(){
             try {
                 const parsedUser = JSON.parse(storedUser);
                 console.log("Retrieved user from localStorage:", parsedUser);
-                
-                // Ensure wallet is never null
-                const updatedUser = {...parsedUser, wallet: parsedUser.wallet || 100};
-                setUser(updatedUser);
-                setWallet(updatedUser.wallet);
-                
-                // Update localStorage if wallet was null
-                if (parsedUser.wallet === null || parsedUser.wallet === undefined) {
-                    localStorage.setItem('user', JSON.stringify(updatedUser));
-                }
+                setUser(parsedUser);
+                setWallet(parsedUser.wallet);
             } catch (error) {
                 console.error("Error parsing user from localStorage:", error);
             }
@@ -85,13 +70,11 @@ function Marketplace(){
                     return res.json();
                 })
                 .then(data => {
-                    
-                    const updatedUser = {...data, wallet: data.wallet || 100};
-                    setUser(updatedUser);
-                    setWallet(updatedUser.wallet);
+                    setUser(data);
+                    setWallet(data.wallet);
                     
                     // Store in localStorage for future use
-                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    localStorage.setItem('user', JSON.stringify(data));
                 })
                 .catch(err => {
                     console.error("Error fetching user:", err);
@@ -160,63 +143,34 @@ function Marketplace(){
         }
     }
     
-    // Add function to refresh user data from server
-    const refreshUserData = () => {
+    // Add function to fetch latest wallet value
+    const fetchLatestWallet = () => {
         if (userId) {
             fetch(`/users/${userId}`)
                 .then(res => {
-                    if (!res.ok) throw new Error("Failed to fetch user data");
+                    if (!res.ok) throw new Error("Failed to fetch wallet");
                     return res.json();
                 })
                 .then(data => {
-                   
-                    const updatedUser = {...data, wallet: data.wallet || 100};
-                    setUser(updatedUser);
-                    setWallet(updatedUser.wallet);
-                    
-                    // Update localStorage
-                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    console.log(`Fetched wallet value: ${data.wallet}, current wallet: ${wallet}`);
+                    // Only update if the wallet value is different and not 100
+                    if (data.wallet !== wallet && data.wallet !== 100) {
+                        console.log(`Updating wallet from ${wallet} to ${data.wallet}`);
+                        setWallet(data.wallet);
+                        setUser({...user, wallet: data.wallet});
+                        localStorage.setItem('user', JSON.stringify({...user, wallet: data.wallet}));
+                    }
                 })
                 .catch(err => {
-                    console.error("Error refreshing user data:", err);
+                    console.error("Error fetching wallet:", err);
                 });
         }
     };
 
-    // Add function to add 100 gems to wallet
-    const addTestGems = () => {
-        if (userId) {
-            const newWalletAmount = wallet + 100;
-            
-            fetch(`/users/${userId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ wallet: newWalletAmount })
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Failed to update wallet");
-                return res.json();
-            })
-            .then(data => {
-                console.log(`Updated wallet: ${data.wallet} gems`);
-                setWallet(data.wallet);
-                
-                // Update user object and localStorage
-                const updatedUser = {...user, wallet: data.wallet};
-                setUser(updatedUser);
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-                
-                setError("Added 100 gems for testing!");
-                setTimeout(() => setError(""), 3000);
-            })
-            .catch(err => {
-                console.error("Error adding test gems:", err);
-                setError(err.message);
-            });
-        }
-    };
+    // Update useEffect to fetch wallet on component mount
+    useEffect(() => {
+        fetchLatestWallet();
+    }, [userId]);
 
     function mysteryCardBuy(){
         if (wallet < 10) {
@@ -250,13 +204,16 @@ function Marketplace(){
             // Show purchase modal
             openPurchaseModal(selectedCard.name, selectedCard.image);
             
+            // Update wallet
+            const newWallet = wallet - 10;
+            console.log(`Updating wallet from ${wallet} to ${newWallet}`);
             return fetch(`/users/${userId}`, {
-                method: 'PATCH', // Use PATCH for partial updates
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    wallet: wallet - 10 // Send new balance, not just the difference
+                    wallet: newWallet
                 })
             });
         })
@@ -265,23 +222,19 @@ function Marketplace(){
             return res.json();
         })
         .then(data => {
-            console.log(`Updated wallet: ${data.wallet} gems left`);
+            // Update wallet from server response
+            console.log(`Server returned wallet value: ${data.wallet}`);
             setWallet(data.wallet);
+            setUser({...user, wallet: data.wallet});
+            localStorage.setItem('user', JSON.stringify({...user, wallet: data.wallet}));
             
-            // Update user object and localStorage
-            const updatedUser = {...user, wallet: data.wallet};
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            
-            // Reset mystery card after 3 seconds so user can buy another one
+            // Reset mystery card after 3 seconds
             setTimeout(() => {
                 setMysteryCard(false);
             }, 3000);
         })
         .catch(err => {
             console.error("Error in mystery card purchase:", err);
-            
-            // Still reset the mystery card even if there was an error
             setTimeout(() => {
                 setMysteryCard(false);
             }, 3000);
@@ -299,7 +252,6 @@ function Marketplace(){
         const selectedCards = cards.slice(randomIndex, randomIndex + 5);
         setBoosterPack(selectedCards);
         setShowBoosterPack(false);
-        setWallet(wallet - 25);
 
         // Show modal with all 5 cards from the booster pack
         openPurchaseModal("Booster Pack", null, selectedCards);
@@ -328,12 +280,14 @@ function Marketplace(){
                 console.log("All booster pack cards added to inventory");
                 
                 // Update wallet on server
+                const newWallet = wallet - 25;
+                console.log(`Updating wallet from ${wallet} to ${newWallet}`);
                 return fetch(`/users/${userId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({wallet: wallet - 25})
+                    body: JSON.stringify({wallet: newWallet})
                 });
             })
             .then(res => {
@@ -341,13 +295,13 @@ function Marketplace(){
                 return res.json();
             })
             .then(data => {
-                console.log(`Updated wallet: ${data.wallet} gems left`);
-                // Update user object and localStorage
-                const updatedUser = {...user, wallet: data.wallet};
-                setUser(updatedUser);
-                localStorage.setItem('user', JSON.stringify(updatedUser));
+                // Update wallet from server response
+                console.log(`Server returned wallet value: ${data.wallet}`);
+                setWallet(data.wallet);
+                setUser({...user, wallet: data.wallet});
+                localStorage.setItem('user', JSON.stringify({...user, wallet: data.wallet}));
                 
-                // Reset booster pack after 3 seconds so user can buy another one
+                // Reset booster pack after 3 seconds
                 setTimeout(() => {
                     setShowBoosterPack(true);
                 }, 3000);
@@ -355,8 +309,6 @@ function Marketplace(){
             .catch(err => {
                 console.error("Error during booster pack purchase:", err);
                 setError(err.message);
-                
-                // Still reset the booster pack view even if there was an error
                 setTimeout(() => {
                     setShowBoosterPack(true);
                 }, 3000);
@@ -372,9 +324,6 @@ function Marketplace(){
 
         // Show modal with all guard cards
         openPurchaseModal("Guard Bundle", null, guardCards);
-        
-        // Update wallet immediately in UI
-        setWallet(wallet - 20);
         
         // Create promises for each card to add to inventory
         const addCardPromises = guardCards.map(card => 
@@ -400,12 +349,14 @@ function Marketplace(){
                 console.log("All guard cards added to inventory");
                 
                 // Update wallet on server
+                const newWallet = wallet - 20;
+                console.log(`Updating wallet from ${wallet} to ${newWallet}`);
                 return fetch(`/users/${userId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({wallet: wallet - 20})
+                    body: JSON.stringify({wallet: newWallet})
                 });
             })
             .then(res => {
@@ -413,11 +364,11 @@ function Marketplace(){
                 return res.json();
             })
             .then(data => {
-                console.log(`Updated wallet: ${data.wallet} gems left`);
-                // Update user object and localStorage
-                const updatedUser = {...user, wallet: data.wallet};
-                setUser(updatedUser);
-                localStorage.setItem('user', JSON.stringify(updatedUser));
+                // Update wallet from server response
+                console.log(`Server returned wallet value: ${data.wallet}`);
+                setWallet(data.wallet);
+                setUser({...user, wallet: data.wallet});
+                localStorage.setItem('user', JSON.stringify({...user, wallet: data.wallet}));
             })
             .catch(err => {
                 console.error("Error during guard bundle purchase:", err);
@@ -456,13 +407,15 @@ function Marketplace(){
             openPurchaseModal(card.name, card.image);
             
             // Update wallet
+            const newWallet = wallet - price;
+            console.log(`Updating wallet from ${wallet} to ${newWallet}`);
             return fetch(`/users/${userId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    wallet: wallet - price
+                    wallet: newWallet
                 })
             });
         })
@@ -471,16 +424,14 @@ function Marketplace(){
             return res.json();
         })
         .then(data => {
-            console.log(`Updated wallet: ${data.wallet} gems left`);
+            // Update wallet from server response
+            console.log(`Server returned wallet value: ${data.wallet}`);
             setWallet(data.wallet);
-            
-            // Update user object and localStorage
-            const updatedUser = {...user, wallet: data.wallet};
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setUser({...user, wallet: data.wallet});
+            localStorage.setItem('user', JSON.stringify({...user, wallet: data.wallet}));
             
             setError(`Successfully purchased ${card.name}!`);
-            setTimeout(() => setError(""), 3000); // Clear success message after 3 seconds
+            setTimeout(() => setError(""), 3000);
         })
         .catch(err => {
             console.error("Error during purchase:", err);
@@ -500,17 +451,16 @@ function Marketplace(){
             />
             {/* Add a navigation bar at the top */}
             <div className='nav-bar'>
-                <Link to={`/users/${userId}/dashboard`} state={{ user: {...user, wallet: wallet || 100} }}>Dashboard</Link>
-                <Link to={`/users/${userId}/inventory`} state={{ user: {...user, wallet: wallet || 100} }}>Inventory</Link>
-                <Link to={`/users/${userId}/marketplace`} state={{ user: {...user, wallet: wallet || 100} }} className="active">Marketplace</Link>
-                <Link to={`/users/${userId}/arena`} state={{ user: {...user, wallet: wallet || 100} }}>Arena</Link>
+                <Link to={`/users/${userId}/dashboard`} state={{ user }}>Dashboard</Link>
+                <Link to={`/users/${userId}/inventory`} state={{ user }}>Inventory</Link>
+                <Link to={`/users/${userId}/marketplace`} state={{ user }} className="active">Marketplace</Link>
+                <Link to={`/users/${userId}/arena`} state={{ user }}>Arena</Link>
             </div>
             
             <div className="user-info">
-                <p>Wallet: {wallet || 100} gems</p>
+                <p>Wallet: {wallet} gems</p>
                 <div className="wallet-buttons">
-                    <button onClick={refreshUserData} className="refresh-button">Refresh Wallet</button>
-                    <button onClick={addTestGems} className="add-gems-button">Add 100 Gems (Testing)</button>
+                    <button onClick={fetchLatestWallet} className="refresh-button">Refresh Wallet</button>
                 </div>
                 {error && <p className="error-message">{error}</p>}
             </div>

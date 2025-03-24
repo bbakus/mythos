@@ -1,5 +1,5 @@
 import React from 'react';
-import './PurchaseModal.css';
+import '../styles/PurchaseModal.css';
 
 const PurchaseModal = ({ isOpen, onClose, cardName, cardImage, multipleCards }) => {
   if (!isOpen) return null;

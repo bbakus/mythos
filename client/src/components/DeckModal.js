@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './DeckModal.css';
+import '../styles/DeckModal.css';
 
 function DeckModal({ onClose, userId, decks, setDecks, inventory }) {
     const [view, setView] = useState('decks'); // 'decks', 'viewDeck', 'addCards'

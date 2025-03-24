@@ -17,19 +17,15 @@ def clean_users():
             print("Creating test user")
             test_user = User(
                 username='testuser',
-                email='test@example.com',
-                wallet=100
+                email='test@example.com'
+                # Let the validator handle the initial wallet value
             )
             test_user.password_hash = 'password123'
             db.session.add(test_user)
             db.session.commit()
         else:
             print(f"Found test user: {test_user.username}, wallet: {test_user.wallet}")
-            # Ensure wallet is 100
-            if test_user.wallet != 100:
-                test_user.wallet = 100
-                db.session.commit()
-                print("Updated test user wallet to 100")
+            # Do not modify the wallet value
         
         # Delete all other users
         users_to_delete = User.query.filter(User.username != 'testuser').all()

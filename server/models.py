@@ -28,7 +28,7 @@ class User(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    wallet = db.Column(db.Integer, default=100, nullable=False)
+    wallet = db.Column(db.Integer, nullable=False)
     
     # Relationships
     inventory = db.relationship('Inventory', back_populates='user', cascade='all, delete-orphan')
@@ -40,15 +40,31 @@ class User(db.Model, SerializerMixin):
     @validates('wallet')
     def validate_wallet(self, key, wallet):
         print(f"Setting wallet value: {wallet}, type: {type(wallet)}")
-        # Always set wallet to 100 for new users
         try:
+            # Only set default for new users (when id is None)
             if wallet is None:
-                return 100
+                if self.id is None:
+                    print("New user signup, setting initial wallet to 100")
+                    return 100
+                else:
+                    print("Existing user with None wallet, setting to 0")
+                    return 0
+            
+            # Convert to int
             wallet_int = int(wallet)
-            return wallet_int if wallet_int > 0 else 100
-        except Exception as e:
-            print(f"Error converting wallet: {e}, defaulting to 100")
-            return 100
+            
+            # Handle negative values
+            if wallet_int < 0:
+                print("Wallet is negative, setting to 0")
+                return 0
+            
+            # Return any valid value (including 0)
+            print(f"Setting wallet to {wallet_int}")
+            return wallet_int
+            
+        except (ValueError, TypeError) as e:
+            print(f"Error converting wallet: {e}, setting to 0")
+            return 0  # Set to 0 on conversion error
     
     @validates('username')
     def validate_username(self, key, username):
