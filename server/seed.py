@@ -3,32 +3,29 @@
 import os
 import sys
 import json
-import random
-from datetime import datetime
-from faker import Faker
 
-# Add the parent directory to sys.path to enable absolute imports
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Use absolute imports
+
 from server.app import app
 from server.models import db, User, Card, Inventory, Deck, CardInDeck
 
 
-fake = Faker()
 
 
 
 def create_users():
     
     users = []
-    # Check if test user already exists
+    
     existing_user = User.query.filter_by(email="test@example.com").first()
     if existing_user:
-        print("Test user already exists, skipping creation")
+        
         return []
         
-    # Create a test user
+    
     test_user = User(
         username="testuser",
         email="test@example.com"
@@ -38,19 +35,17 @@ def create_users():
     
     db.session.add_all(users)
     db.session.commit()
-    print(f"Created {len(users)} users!")
+    
     return users
 
 def seed_cards_from_json():
-    """Seed cards from the JSON file"""
-    print("Clearing only cards table...")
+    
     Card.query.delete()
     db.session.commit()
     
-    print("Seeding cards from json...")
-    # Get the directory where this script is located
+    
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Create absolute path to the JSON file
+    
     json_path = os.path.join(script_dir, 'data', 'cards.json')
     
     with open(json_path) as f:
@@ -71,36 +66,29 @@ def seed_cards_from_json():
     
     db.session.add_all(cards)
     db.session.commit()
-    print(f"Created {len(cards)} cards!")
     return cards
 
 def create_default_deck():
-    """Create a default deck for the test user"""
-    # Find the test user
+    
     user = User.query.filter_by(username="testuser").first()
     if not user:
-        print("Test user not found, skipping deck creation")
+        
         return
         
-    # Check if user already has a deck
+    
     existing_deck = Deck.query.filter_by(user_id=user.id).first()
     if existing_deck:
-        print(f"User already has a deck '{existing_deck.name}', skipping creation")
         return
         
-    print("Creating default deck for test user...")
     
-    # Create a new deck
     default_deck = Deck(
         name="Starter Deck",
         user_id=user.id,
         volume=20
     )
     db.session.add(default_deck)
-    db.session.flush()  # This assigns an ID to the deck
+    db.session.flush()  
     
-    # Get some cards to add to the deck (selecting 20 cards with a mix of attributes)
-    # We'll get some guards, some thieves, some curse cards, and some regular cards
     guards = Card.query.filter_by(guard=True).limit(5).all()
     thieves = Card.query.filter_by(thief=True).limit(5).all()
     curses = Card.query.filter_by(curse=True).limit(5).all()
@@ -111,7 +99,6 @@ def create_default_deck():
     deck_cards = []
     position = 0
     
-    # Add cards to deck
     for card in guards + thieves + curses + regulars:
         deck_card = CardInDeck(
             deck_id=default_deck.id,
@@ -123,14 +110,15 @@ def create_default_deck():
     
     db.session.add_all(deck_cards)
     db.session.commit()
-    print(f"Created default deck with {len(deck_cards)} cards!")
+    
+
+
 
 if __name__ == "__main__":
     with app.app_context():
-        # Ensure tables exist
-        print("Creating tables if they don't exist...")
+       
         db.create_all()
-        
+       
         create_users()
         cards = seed_cards_from_json()
         create_default_deck()

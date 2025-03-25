@@ -18,7 +18,7 @@ db = SQLAlchemy(metadata=metadata)
 
 
 
-# Main Models
+
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     
@@ -30,36 +30,32 @@ class User(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     wallet = db.Column(db.Integer, nullable=False)
     
-    # Relationships
+   
     inventory = db.relationship('Inventory', back_populates='user', cascade='all, delete-orphan')
     decks = db.relationship('Deck', back_populates='user', cascade='all, delete-orphan')
     
-    # Serialization rules
+    
     serialize_rules = ('-_password_hash', '-inventory', '-decks')
     
     @validates('wallet')
     def validate_wallet(self, key, wallet):
-        print(f"Setting wallet value: {wallet}, type: {type(wallet)}")
+        
         try:
-            # Only set default for new users (when id is None)
+            
             if wallet is None:
                 if self.id is None:
-                    print("New user signup, setting initial wallet to 100")
+                    
                     return 100
-                else:
-                    print("Existing user with None wallet, setting to 0")
+                elif wallet == 0:
+                    
                     return 0
             
-            # Convert to int
             wallet_int = int(wallet)
             
-            # Handle negative values
             if wallet_int < 0:
-                print("Wallet is negative, setting to 0")
+                
                 return 0
             
-            # Return any valid value (including 0)
-            print(f"Setting wallet to {wallet_int}")
             return wallet_int
             
         except (ValueError, TypeError) as e:
@@ -108,11 +104,9 @@ class Card(db.Model, SerializerMixin):
     curse = db.Column(db.Boolean, default=False)
     
     
-    # Relationships
     inventories = db.relationship('Inventory', back_populates='card')
     cards_in_deck = db.relationship('CardInDeck', back_populates='card')
     
-    # Serialization
     serialize_rules = ('-inventories', '-cards_in_deck')
     
     @validates('name')
@@ -132,11 +126,11 @@ class Inventory(db.Model, SerializerMixin):
     card_id = db.Column(db.Integer, db.ForeignKey('cards.id'), nullable=False)
     quantity = db.Column(db.Integer, default=1)
     
-    # Relationships
+    
     user = db.relationship('User', back_populates='inventory')
     card = db.relationship('Card', back_populates='inventories')
     
-    # Serialization
+    
     serialize_rules = ('-user', '-card.inventories')
     
     @validates('quantity')
@@ -158,11 +152,9 @@ class Deck(db.Model, SerializerMixin):
     volume = db.Column(db.Integer, default=20)
     
     
-    # Relationships
     user = db.relationship('User', back_populates='decks')
     cards_in_deck = db.relationship('CardInDeck', back_populates='deck', cascade='all, delete-orphan')
     
-    # Serialization
     serialize_rules = ('-user', '-cards_in_deck.deck')
     
     @validates('name')
@@ -190,12 +182,14 @@ class CardInDeck(db.Model, SerializerMixin):
     
 
     
-    # Relationships
+    
     deck = db.relationship('Deck', back_populates='cards_in_deck')
     card = db.relationship('Card', back_populates='cards_in_deck')
     
-    # Serialization
+    
     serialize_rules = ('-deck', '-card.cards_in_deck')
+
+
     
     
 

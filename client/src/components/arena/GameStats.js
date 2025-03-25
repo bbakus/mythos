@@ -15,7 +15,7 @@ function GameStats({
         <>
             <div className="player-stats-container">
                 <div className="player-stats">
-                    <div className="life-counter">HP: {playerLife}</div>
+                    <div className="life-counter">LP: {playerLife}</div>
                     <div className="mana-counter">Mana: {playerMana}</div>
                     <div className="deck-counter">Deck: {remainingDeck.length}</div>
                 </div>
@@ -35,7 +35,7 @@ function GameStats({
             
             <div className="opponent-stats-container">
                 <div className="player-stats">
-                    <div className="life-counter">Enemy HP: {opponentLife}</div>
+                    <div className="life-counter">Enemy LP: {opponentLife}</div>
                     <div className="mana-counter">Enemy Mana: {opponentMana}</div>
                     <div className="deck-counter">Enemy Deck: {opponentDeck.length}</div>
                 </div>

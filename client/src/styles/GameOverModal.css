@@ -1,0 +1,229 @@
+.game-over-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.game-over-modal {
+    background: linear-gradient(135deg, #1a1c2c 0%, #2a2c3c 100%);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    animation: slideIn 0.5s ease-out;
+}
+
+.game-over-modal.victory {
+    border: 3px solid #4CAF50;
+}
+
+.game-over-modal.defeat {
+    border: 3px solid #f44336;
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.result-title {
+    font-size: 4em;
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.victory .result-title {
+    color: #4CAF50;
+    animation: victoryPulse 2s infinite;
+}
+
+.defeat .result-title {
+    color: #f44336;
+    animation: defeatPulse 2s infinite;
+}
+
+.result-subtitle {
+    font-size: 1.5em;
+    margin-top: 10px;
+    color: #bbb;
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.stats-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 20px;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.life-section {
+    text-align: center;
+}
+
+.life-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.life-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.life-divider {
+    font-size: 2em;
+    color: #666;
+}
+
+.stats-section h2 {
+    color: #ddd;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    text-align: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.stat-label {
+    font-size: 1em;
+    color: #999;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #fff;
+}
+
+.modal-footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+    font-style: italic;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes victoryPulse {
+    0% { text-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
+    50% { text-shadow: 0 0 30px rgba(76, 175, 80, 0.8); }
+    100% { text-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
+}
+
+@keyframes defeatPulse {
+    0% { text-shadow: 0 0 10px rgba(244, 67, 54, 0.5); }
+    50% { text-shadow: 0 0 30px rgba(244, 67, 54, 0.8); }
+    100% { text-shadow: 0 0 10px rgba(244, 67, 54, 0.5); }
+}
+
+/* Scrollbar styling */
+.game-over-modal::-webkit-scrollbar {
+    width: 10px;
+}
+
+.game-over-modal::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.game-over-modal::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+.game-over-modal::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .game-over-modal {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .result-title {
+        font-size: 3em;
+    }
+
+    .result-subtitle {
+        font-size: 1.2em;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .stat-value {
+        font-size: 1.5em;
+    }
+} 

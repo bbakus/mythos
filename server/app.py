@@ -32,10 +32,10 @@ class Users(Resource):
     
     def post(self):
         data = request.get_json()
-        print("Received user creation data:", data)
+        
         
         try:
-            # Check that required fields are present
+            
             if not data.get('username'):
                 return {'error': 'Username is required'}, 400
             if not data.get('email'):
@@ -48,25 +48,20 @@ class Users(Resource):
                 email=data['email']
             )
             
-            # Handle password setting
+            
             try:
                 new_user.password_hash = data['password']
             except Exception as e:
                 print(f"Error setting password: {str(e)}")
                 return {'error': f'Password error: {str(e)}'}, 400
             
-            # Let the validator handle the initial wallet value
-            print("Adding user to database session")
+            
             db.session.add(new_user)
             
             try:
-                print("Committing to database")
+                
                 db.session.commit()
                 
-                # Verify wallet was set
-                print(f"User created with wallet: {new_user.wallet}")
-                
-                print(f"User created successfully with ID: {new_user.id}")
             except Exception as e:
                 db.session.rollback()
                 print(f"Database commit error: {str(e)}")
@@ -75,7 +70,6 @@ class Users(Resource):
             session['user_id'] = new_user.id
             
             user_dict = new_user.to_dict()
-            print("Returning user data:", user_dict)
             return user_dict, 201
             
         except ValueError as e:
@@ -98,19 +92,14 @@ class UserById(Resource):
             return {'error': 'User not found'}, 404
         
         data = request.get_json()
-        print(f"PATCH request for user {id}, data:", data)
         
         try:
             for attr in data:
                 if attr == 'password':
                     user.password_hash = data['password']
                 elif attr == 'wallet':
-                    # Handle wallet updates through the validator
-                    print(f"Updating wallet from {user.wallet} to {data['wallet']}")
-                    # Convert to int first to ensure proper validation
                     wallet_value = int(data['wallet'])
                     user.wallet = wallet_value
-                    print(f"Wallet after update: {user.wallet}")
                 else:
                     setattr(user, attr, data[attr])
             
@@ -147,17 +136,16 @@ class CardById(Resource):
 
 class UserInventory(Resource):
     def get(self, user_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Get all inventory items for the user
         inventory = Inventory.query.filter_by(user_id=user_id).all()
         return [item.to_dict() for item in inventory], 200
     
     def post(self, user_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
@@ -165,24 +153,24 @@ class UserInventory(Resource):
         data = request.get_json()
         
         try:
-            # Check if card exists
+            
             card = Card.query.filter_by(id=data['card_id']).first()
             if not card:
                 return {'error': 'Card not found'}, 404
             
-            # Check if card is already in inventory
+            
             existing_item = Inventory.query.filter_by(
                 user_id=user_id, 
                 card_id=data['card_id']
             ).first()
             
             if existing_item:
-                # Update quantity
+                
                 existing_item.quantity += data.get('quantity', 1)
                 db.session.commit()
                 return existing_item.to_dict(), 200
             else:
-                # Create new inventory item
+            
                 new_item = Inventory(
                     user_id=user_id,
                     card_id=data['card_id'],
@@ -202,12 +190,12 @@ class UserInventory(Resource):
 
 class UserInventoryCard(Resource):
     def get(self, user_id, card_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
             
-        # Find the specific inventory item
+       
         inventory_item = Inventory.query.filter_by(
             user_id=user_id,
             card_id=card_id
@@ -219,7 +207,7 @@ class UserInventoryCard(Resource):
         return inventory_item.to_dict(), 200
     
     def delete(self, user_id, card_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
@@ -233,15 +221,14 @@ class UserInventoryCard(Resource):
         if not inventory_item:
             return {'error': 'Card not found in user inventory'}, 404
             
-        # Check quantity parameter
         data = request.get_json() or {}
         quantity = data.get('quantity', 1)
         
         if quantity >= inventory_item.quantity:
-            # Remove the item completely
+           
             db.session.delete(inventory_item)
         else:
-            # Reduce the quantity
+            
             inventory_item.quantity -= quantity
             
         db.session.commit()
@@ -250,17 +237,17 @@ class UserInventoryCard(Resource):
 
 class UserDecks(Resource):
     def get(self, user_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Get all decks for the user
+        
         decks = Deck.query.filter_by(user_id=user_id).all()
         return [deck.to_dict() for deck in decks], 200
     
     def post(self, user_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
@@ -286,12 +273,12 @@ class UserDecks(Resource):
 
 class UserDeckById(Resource):
     def get(self, user_id, deck_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Check if deck exists and belongs to user
+        
         deck = Deck.query.filter_by(id=deck_id, user_id=user_id).first()
         if not deck:
             return {'error': 'Deck not found'}, 404
@@ -299,12 +286,12 @@ class UserDeckById(Resource):
         return deck.to_dict(), 200
     
     def patch(self, user_id, deck_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Check if deck exists and belongs to user
+        
         deck = Deck.query.filter_by(id=deck_id, user_id=user_id).first()
         if not deck:
             return {'error': 'Deck not found'}, 404
@@ -321,12 +308,12 @@ class UserDeckById(Resource):
             return {'error': str(e)}, 400
     
     def delete(self, user_id, deck_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Check if deck exists and belongs to user
+        
         deck = Deck.query.filter_by(id=deck_id, user_id=user_id).first()
         if not deck:
             return {'error': 'Deck not found'}, 404
@@ -338,20 +325,20 @@ class UserDeckById(Resource):
 
 class UserDeckCards(Resource):
     def get(self, user_id, deck_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Check if deck exists and belongs to user
+        
         deck = Deck.query.filter_by(id=deck_id, user_id=user_id).first()
         if not deck:
             return {'error': 'Deck not found'}, 404
         
-        # Get all cards in the deck
+        
         deck_cards = CardInDeck.query.filter_by(deck_id=deck_id).all()
         
-        # Manually construct response to avoid circular references
+        
         result = []
         for deck_card in deck_cards:
             card_data = deck_card.card.to_dict()
@@ -365,12 +352,12 @@ class UserDeckCards(Resource):
         return result, 200
     
     def post(self, user_id, deck_id):
-        # Check if user exists
+        
         user = User.query.filter_by(id=user_id).first()
         if not user:
             return {'error': 'User not found'}, 404
         
-        # Check if deck exists and belongs to user
+        
         deck = Deck.query.filter_by(id=deck_id, user_id=user_id).first()
         if not deck:
             return {'error': 'Deck not found'}, 404
@@ -378,12 +365,12 @@ class UserDeckCards(Resource):
         data = request.get_json()
         
         try:
-            # Check if card exists
+            
             card = Card.query.filter_by(id=data['card_id']).first()
             if not card:
                 return {'error': 'Card not found'}, 404
             
-            # Check if user has this card in inventory
+            
             inventory_item = Inventory.query.filter_by(
                 user_id=user_id,
                 card_id=data['card_id']
@@ -392,18 +379,18 @@ class UserDeckCards(Resource):
             if not inventory_item:
                 return {'error': 'Card not found in user inventory'}, 404
             
-            # Check if card is already in deck
+            
             existing_card = CardInDeck.query.filter_by(
                 deck_id=deck_id,
                 card_id=data['card_id']
             ).first()
             
             if existing_card:
-                # Update quantity
+                
                 existing_card.quantity += data.get('quantity', 1)
                 db.session.commit()
                 
-                # Construct response
+                
                 card_data = existing_card.card.to_dict()
                 result = {
                     'id': existing_card.id,
@@ -414,7 +401,7 @@ class UserDeckCards(Resource):
                 
                 return result, 200
             else:
-                # Create new card in deck
+                
                 new_card = CardInDeck(
                     deck_id=deck_id,
                     card_id=data['card_id'],
@@ -424,7 +411,7 @@ class UserDeckCards(Resource):
                 db.session.add(new_card)
                 db.session.commit()
                 
-                # Construct response
+               
                 card_data = new_card.card.to_dict()
                 result = {
                     'id': new_card.id,
@@ -447,22 +434,27 @@ class Login(Resource):
         if not data or not data.get('email') or not data.get('password'):
             return {'error': 'Email and password are required'}, 400
             
-        # Find user by email
+        
         user = User.query.filter_by(email=data['email']).first()
         
         if not user:
             return {'error': 'Invalid email or password'}, 401
             
-        # Check password
+        
         if not user.authenticate(data['password']):
             return {'error': 'Invalid email or password'}, 401
             
-        # Set user in session
+        
         session['user_id'] = user.id
         
         return user.to_dict(), 200
 
-# Add resources to API
+
+    
+    
+
+
+
 api.add_resource(Login, '/auth/login')
 api.add_resource(UserDeckCards, '/users/<int:user_id>/decks/<int:deck_id>/cards')
 api.add_resource(UserDeckById, '/users/<int:user_id>/decks/<int:deck_id>')
@@ -474,7 +466,7 @@ api.add_resource(UserById, '/users/<int:id>')
 api.add_resource(Cards, '/cards')
 api.add_resource(CardById, '/cards/<int:id>')
 
-# Error handlers
+
 @app.errorhandler(NotFound)
 def handle_not_found(e):
     return {"error": "Not Found"}, 404
