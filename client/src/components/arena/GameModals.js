@@ -1,4 +1,5 @@
 import React from 'react';
+import GameOverModal from '../GameOverModal';
 
 function GameModals({
     showIntroModal,
@@ -184,35 +185,10 @@ function GameModals({
                 </div>
             )}
             
-            {showGameOverModal && (
-                <div className="modal-overlay game-over-overlay">
-                    <div className={`game-over-modal ${gameResult}`}>
-                        <h1>{gameResult === 'victory' ? 'VICTORY!' : 'DEFEAT!'}</h1>
-                        <p>{gameResult === 'victory' 
-                            ? 'You have defeated your opponent!' 
-                            : 'Your opponent has defeated you!'}
-                        </p>
-                        {gameResult === 'victory' && (
-                            <div className="reward-container">
-                                <p className="reward-text">Reward: <span className="gems">+30 Gems</span></p>
-                                <img src="/assets/images/misc/gem.png" alt="Gems" className="gem-icon" />
-                            </div>
-                        )}
-                        <div className="game-over-stats">
-                            <p>Your final HP: {playerLife}</p>
-                            <p>Enemy final HP: {opponentLife}</p>
-                            <p>Battle rounds: {roundCount}</p>
-                        </div>
-                        <p className="return-message">Returning to dashboard in a few seconds...</p>
-                        <button 
-                            className="return-now-button"
-                            onClick={onReturnToDashboard}
-                        >
-                            Return Now
-                        </button>
-                    </div>
-                </div>
-            )}
+            <GameOverModal 
+                show={showGameOverModal}
+                result={gameResult}
+            />
             
             {showGuardBlockModal && (
                 <div className="modal-overlay">

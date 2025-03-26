@@ -143,35 +143,6 @@ function Marketplace(){
         }
     }
     
-    // Add function to fetch latest wallet value
-    const fetchLatestWallet = () => {
-        if (userId) {
-            fetch(`/users/${userId}`)
-                .then(res => {
-                    if (!res.ok) throw new Error("Failed to fetch wallet");
-                    return res.json();
-                })
-                .then(data => {
-                    console.log(`Fetched wallet value: ${data.wallet}, current wallet: ${wallet}`);
-                    // Only update if the wallet value is different and not 100
-                    if (data.wallet !== wallet && data.wallet !== 100) {
-                        console.log(`Updating wallet from ${wallet} to ${data.wallet}`);
-                        setWallet(data.wallet);
-                        setUser({...user, wallet: data.wallet});
-                        localStorage.setItem('user', JSON.stringify({...user, wallet: data.wallet}));
-                    }
-                })
-                .catch(err => {
-                    console.error("Error fetching wallet:", err);
-                });
-        }
-    };
-
-    // Update useEffect to fetch wallet on component mount
-    useEffect(() => {
-        fetchLatestWallet();
-    }, [userId]);
-
     function mysteryCardBuy(){
         if (wallet < 10) {
             setError("Not enough gems to buy this card");
@@ -459,9 +430,6 @@ function Marketplace(){
             
             <div className="user-info">
                 <p>Wallet: {wallet} gems</p>
-                <div className="wallet-buttons">
-                    <button onClick={fetchLatestWallet} className="refresh-button">Refresh Wallet</button>
-                </div>
                 {error && <p className="error-message">{error}</p>}
             </div>
             

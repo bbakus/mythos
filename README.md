@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# Mythos: Epic Card Battle Game 🐉⚔️
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Mythos is an immersive card battle game that combines strategic gameplay with mythical creatures and powerful abilities. Players build their decks, collect rare cards, and battle against AI opponents in an epic arena setting.
 
-## Available Scripts
+## 🌟 Features
 
-In the project directory, you can run:
+- **Strategic Card Battles**: Engage in intense 1v1 battles with AI opponents
+- **Unique Card Mechanics**:
+  - Guard Cards: Defensive units that can block attacks and protect adjacent lanes
+  - Thief Cards: Stealthy units that bypass enemy defenses
+  - Curse Cards: Powerful cards that deal damage even when destroyed
+- **Dynamic Economy System**:
+  - Earn gems through victories
+  - Purchase new cards from the marketplace
+  - Welcome gift of 100 gems for new players
+- **Deck Building**:
+  - Customize your deck with 20 cards
+  - Balance your strategy between attack and defense
+  - Collect and trade rare cards
+- **User-Friendly Interface**:
+  - Modern, responsive design
+  - Real-time battle animations
+  - Detailed game statistics and analytics
+- **Progressive System**:
+  - Start with a balanced starter deck
+  - Unlock new cards through gameplay
+  - Build your collection over time
 
-### `npm start`
+## 🚀 Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Prerequisites
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Python 3.8 or higher
+- Node.js 14.0 or higher
+- SQLite3
 
-### `npm test`
+### Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/mythos.git
+cd mythos
+```
 
-### `npm run build`
+2. Set up the backend:
+```bash
+cd server
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python seed.py
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Set up the frontend:
+```bash
+cd ../client
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Running the Application
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Start the backend server (from the server directory):
+```bash
+flask run -p 5555
+```
 
-### `npm run eject`
+2. Start the frontend development server (from the client directory):
+```bash
+npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. Open your browser and navigate to `http://localhost:3000`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🎮 Gameplay
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Basic Rules
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Each player starts with 100 Life Points
+- Players take turns playing cards from their hand
+- Cards can attack enemy cards or directly target the opponent
+- Special abilities (Guard, Thief, Curse) add strategic depth to battles
+- Victory is achieved by reducing the opponent's Life Points to 0
 
-## Learn More
+### Special Card Abilities
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Guard Cards**: Can block attacks from adjacent lanes and are able to block thief cards
+- **Thief Cards**: Bypass enemy defenses to deal direct damage
+- **Curse Cards**: Deal damage to the opponent when destroyed
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🛠️ Technical Stack
 
-### Code Splitting
+- **Frontend**: React.js with modern CSS animations
+- **Backend**: Python Flask with SQLAlchemy
+- **Database**: SQLite with custom models for cards, decks, and user data
+- **Authentication**: Secure user sessions with password hashing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🤝 Contributing
 
-### Analyzing the Bundle Size
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📝 License
 
-### Making a Progressive Web App
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🙏 Acknowledgments
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Card artwork sourced from google and AI generated images, card designs created by myself in Adobe PS
+- Special thanks to Isabelle Amorello for her unwavering support
+- Built with passion for the glory of all nerds

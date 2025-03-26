@@ -1,0 +1,155 @@
+.payment-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.payment-modal {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid #4a4a4a;
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.payment-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.payment-modal-header h2 {
+    margin: 0;
+    color: #ffd700;
+    font-size: 1.8em;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.close-button:hover {
+    color: #ffd700;
+}
+
+.gem-packages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.gem-package {
+    background: linear-gradient(135deg, #333 0%, #222 100%);
+    border: 2px solid #4a4a4a;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gem-package:hover {
+    transform: translateY(-2px);
+    border-color: #ffd700;
+}
+
+.gem-package.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, #4a4a4a 0%, #333 100%);
+}
+
+.gem-amount {
+    font-size: 1.2em;
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.gem-price {
+    color: #fff;
+}
+
+.payment-form {
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ddd;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #4a4a4a;
+    border-radius: 5px;
+    background: #333;
+    color: #fff;
+    font-size: 1em;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.submit-button.processing {
+    background: linear-gradient(135deg, #666 0%, #444 100%);
+    color: #fff;
+}
+
+.error-message {
+    color: #ff6b6b;
+    margin-top: 10px;
+    text-align: center;
+} 

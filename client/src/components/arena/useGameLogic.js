@@ -254,10 +254,18 @@ export function useGameLogic(userId, userData) {
         setGameResult({
             outcome: 'victory',
             stats: {
-                ...gameStats,
                 finalLife: playerLife,
                 enemyFinalLife: opponentLife,
+                totalDamageDealt: gameStats.totalDamageDealt || 0,
+                highestDamageDealt: gameStats.highestDamageDealt || 0,
+                totalDamageTaken: gameStats.totalDamageTaken || 0,
+                cardsPlayed: gameStats.cardsPlayed || 0,
+                cardsDestroyed: gameStats.cardsDestroyed || 0,
+                thiefDamage: gameStats.thiefDamage || 0,
+                guardBlocks: gameStats.guardBlocks || 0,
+                curseDamage: gameStats.curseDamage || 0,
                 totalRounds: roundCount,
+                longestRound: gameStats.longestRound || 0,
                 gemsEarned: 30
             }
         });
@@ -301,10 +309,18 @@ export function useGameLogic(userId, userData) {
         setGameResult({
             outcome: 'defeat',
             stats: {
-                ...gameStats,
                 finalLife: playerLife,
                 enemyFinalLife: opponentLife,
+                totalDamageDealt: gameStats.totalDamageDealt || 0,
+                highestDamageDealt: gameStats.highestDamageDealt || 0,
+                totalDamageTaken: gameStats.totalDamageTaken || 0,
+                cardsPlayed: gameStats.cardsPlayed || 0,
+                cardsDestroyed: gameStats.cardsDestroyed || 0,
+                thiefDamage: gameStats.thiefDamage || 0,
+                guardBlocks: gameStats.guardBlocks || 0,
+                curseDamage: gameStats.curseDamage || 0,
                 totalRounds: roundCount,
+                longestRound: gameStats.longestRound || 0,
                 gemsEarned: 0
             }
         });

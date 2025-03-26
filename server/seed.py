@@ -72,15 +72,12 @@ def create_default_deck():
     
     user = User.query.filter_by(username="testuser").first()
     if not user:
-        
         return
         
-    
     existing_deck = Deck.query.filter_by(user_id=user.id).first()
     if existing_deck:
         return
         
-    
     default_deck = Deck(
         name="Starter Deck",
         user_id=user.id,
@@ -97,18 +94,29 @@ def create_default_deck():
     ).limit(5).all()
     
     deck_cards = []
+    inventory_items = []
     position = 0
     
     for card in guards + thieves + curses + regulars:
+        # Add to deck
         deck_card = CardInDeck(
             deck_id=default_deck.id,
             card_id=card.id,
             quantity=1
         )
         deck_cards.append(deck_card)
+        
+        # Add to inventory
+        inventory_item = Inventory(
+            user_id=user.id,
+            card_id=card.id,
+            quantity=1
+        )
+        inventory_items.append(inventory_item)
         position += 1
     
     db.session.add_all(deck_cards)
+    db.session.add_all(inventory_items)
     db.session.commit()
     
 

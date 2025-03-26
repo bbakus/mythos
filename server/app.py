@@ -33,9 +33,7 @@ class Users(Resource):
     def post(self):
         data = request.get_json()
         
-        
         try:
-            
             if not data.get('username'):
                 return {'error': 'Username is required'}, 400
             if not data.get('email'):
@@ -45,9 +43,9 @@ class Users(Resource):
                 
             new_user = User(
                 username=data['username'],
-                email=data['email']
+                email=data['email'],
+                wallet=100  # Set initial wallet value
             )
-            
             
             try:
                 new_user.password_hash = data['password']
@@ -55,11 +53,50 @@ class Users(Resource):
                 print(f"Error setting password: {str(e)}")
                 return {'error': f'Password error: {str(e)}'}, 400
             
-            
             db.session.add(new_user)
             
             try:
+                db.session.commit()
                 
+                # Create starter deck
+                default_deck = Deck(
+                    name="Starter Deck",
+                    user_id=new_user.id,
+                    volume=20
+                )
+                db.session.add(default_deck)
+                db.session.flush()
+                
+                # Get starter cards
+                guards = Card.query.filter_by(guard=True).limit(5).all()
+                thieves = Card.query.filter_by(thief=True).limit(5).all()
+                curses = Card.query.filter_by(curse=True).limit(5).all()
+                regulars = Card.query.filter(
+                    ~Card.id.in_([c.id for c in guards + thieves + curses])
+                ).limit(5).all()
+                
+                deck_cards = []
+                inventory_items = []
+                
+                for card in guards + thieves + curses + regulars:
+                    # Add to deck
+                    deck_card = CardInDeck(
+                        deck_id=default_deck.id,
+                        card_id=card.id,
+                        quantity=1
+                    )
+                    deck_cards.append(deck_card)
+                    
+                    # Add to inventory
+                    inventory_item = Inventory(
+                        user_id=new_user.id,
+                        card_id=card.id,
+                        quantity=1
+                    )
+                    inventory_items.append(inventory_item)
+                
+                db.session.add_all(deck_cards)
+                db.session.add_all(inventory_items)
                 db.session.commit()
                 
             except Exception as e:
