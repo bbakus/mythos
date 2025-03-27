@@ -18,17 +18,10 @@ services:
       - key: CORS_ORIGINS
         value: https://mythos-frontend.onrender.com
 
-  - type: web
+  - type: static
     name: mythos-frontend
-    env: node
-    buildCommand: |
-      cd client
-      npm install
-      CI=false npm run build
-    startCommand: |
-      cd client
-      npm install -g serve
-      serve -s build -l $PORT
+    buildCommand: cd client && chmod +x build.sh && ./build.sh
+    staticPublishPath: client/build
     envVars:
       - key: REACT_APP_API_URL
         value: https://mythos-backend.onrender.com
