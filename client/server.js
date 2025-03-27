@@ -8,7 +8,8 @@ app.disable('trust proxy');
 // Add CORS headers
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Host');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
 });
 
@@ -21,7 +22,7 @@ app.get('*', (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-const host = '0.0.0.0';
+const host = process.env.HOST || '0.0.0.0';
 
 app.listen(port, host, () => {
   console.log(`Server is running on ${host}:${port}`);
