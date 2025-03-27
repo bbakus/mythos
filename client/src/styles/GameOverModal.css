@@ -14,8 +14,12 @@
 
 .game-over-modal {
     background: linear-gradient(135deg, #1a1c2c 0%, #2a2c3c 100%);
+    background-image: url('../../public/assets/images/misc/background-surface.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border-radius: 20px;
-    padding: 30px;
+    padding: 40px;
     width: 90%;
     max-width: 800px;
     max-height: 90vh;
@@ -35,11 +39,11 @@
 
 .modal-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 .result-title {
-    font-size: 4em;
+    font-size: 5em;
     margin: 0;
     text-transform: uppercase;
     font-weight: bold;
@@ -47,7 +51,8 @@
 }
 
 .victory .result-title {
-    color: #4CAF50;
+    color: #a044ff;
+    text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
     animation: victoryPulse 2s infinite;
 }
 
@@ -57,8 +62,8 @@
 }
 
 .result-subtitle {
-    font-size: 1.5em;
-    margin-top: 10px;
+    font-size: 2em;
+    margin-top: 15px;
     color: #bbb;
 }
 
@@ -71,79 +76,69 @@
 .stats-section {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
-    padding: 20px;
+    padding: 25px;
     animation: fadeInUp 0.5s ease-out;
 }
 
-.life-section {
-    text-align: center;
-}
-
-.life-stats {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-}
-
-.life-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.life-divider {
-    font-size: 2em;
-    color: #666;
-}
-
-.stats-section h2 {
+.stats-section h3 {
     color: #ddd;
     margin-top: 0;
     margin-bottom: 20px;
-    font-size: 1.8em;
+    font-size: 2em;
     text-align: center;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 10px;
-    transition: transform 0.2s;
-}
-
-.stat-item:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.07);
-}
-
-.stat-label {
-    font-size: 1em;
-    color: #999;
-    margin-bottom: 5px;
-}
-
-.stat-value {
+.stats-section p {
     font-size: 1.8em;
-    font-weight: bold;
+    margin: 10px 0;
     color: #fff;
 }
 
-.modal-footer {
-    text-align: center;
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
     margin-top: 30px;
-    color: #666;
-    font-style: italic;
+}
+
+.play-again-btn {
+    background: linear-gradient(135deg, #6a3093, #a044ff);
+    color: #f8d8a8;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    min-width: 120px;
+    font-family: 'RomanAntique', 'Times New Roman', serif;
+}
+
+.play-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 15px rgba(160, 68, 255, 0.5);
+}
+
+.dashboard-btn {
+    background: linear-gradient(135deg, #3e3e3e, #222222);
+    color: #f8d8a8;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    min-width: 120px;
+    font-family: 'RomanAntique', 'Times New Roman', serif;
+}
+
+.dashboard-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes fadeIn {
@@ -174,9 +169,9 @@
 }
 
 @keyframes victoryPulse {
-    0% { text-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
-    50% { text-shadow: 0 0 30px rgba(76, 175, 80, 0.8); }
-    100% { text-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
+    0% { text-shadow: 0 0 15px rgba(0, 0, 0, 0.8); }
+    50% { text-shadow: 0 0 30px rgba(0, 0, 0, 0.9); }
+    100% { text-shadow: 0 0 15px rgba(0, 0, 0, 0.8); }
 }
 
 @keyframes defeatPulse {
@@ -212,18 +207,23 @@
     }
 
     .result-title {
-        font-size: 3em;
+        font-size: 3.5em;
     }
 
     .result-subtitle {
-        font-size: 1.2em;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-
-    .stat-value {
         font-size: 1.5em;
+    }
+
+    .stats-section h3 {
+        font-size: 1.6em;
+    }
+
+    .stats-section p {
+        font-size: 1.4em;
+    }
+
+    .play-again-btn, .dashboard-btn {
+        font-size: 1.2em;
+        padding: 12px 24px;
     }
 } 

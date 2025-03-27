@@ -15,9 +15,9 @@ function GameStats({
         <>
             <div className="player-stats-container">
                 <div className="player-stats">
-                    <div className="life-counter">LP: {playerLife}</div>
-                    <div className="mana-counter">Mana: {playerMana}</div>
-                    <div className="deck-counter">Deck: {remainingDeck.length}</div>
+                    <div className="life-counter" style={{ backgroundImage: 'url(/assets/images/misc/LP-sphere.png)' }}>LP: {playerLife}</div>
+                    <div className="mana-counter" style={{ backgroundImage: 'url(/assets/images/misc/mana-sphere.png)' }}>Mana: {playerMana}</div>
+                    <div className="deck-counter" style={{ backgroundImage: 'url(/assets/images/misc/deck-sphere.png)' }}>Deck: {remainingDeck.length}</div>
                 </div>
                 
                 {(gamePhase === 'placement' || gamePhase === 'battle') && !battleComplete && (
@@ -35,9 +35,9 @@ function GameStats({
             
             <div className="opponent-stats-container">
                 <div className="player-stats">
-                    <div className="life-counter">Enemy LP: {opponentLife}</div>
-                    <div className="mana-counter">Enemy Mana: {opponentMana}</div>
-                    <div className="deck-counter">Enemy Deck: {opponentDeck.length}</div>
+                    <div className="life-counter" style={{ backgroundImage: 'url(/assets/images/misc/LP-sphere.png)' }}>LP: {opponentLife}</div>
+                    <div className="mana-counter" style={{ backgroundImage: 'url(/assets/images/misc/mana-sphere.png)' }}>Mana: {opponentMana}</div>
+                    <div className="deck-counter" style={{ backgroundImage: 'url(/assets/images/misc/deck-sphere.png)' }}>Deck: {opponentDeck.length}</div>
                 </div>
             </div>
         </>

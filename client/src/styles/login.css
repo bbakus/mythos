@@ -86,13 +86,20 @@ input {
   border-radius: 4px;
   font-size: 1rem;
   background-color: rgba(255, 255, 255, 0.8);
+  color: #333; /* Add text color */
 }
 
 input:focus {
   border-color: #80bdff;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque but still slightly transparent */
+  color: #333; /* Ensure text color stays dark */
+}
+
+/* Add placeholder color */
+input::placeholder {
+  color: #666;
 }
 
 .submit-btn {

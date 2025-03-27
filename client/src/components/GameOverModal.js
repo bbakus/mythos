@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/GameOverModal.css';
 
-function GameOverModal({ show, result }) {
+function GameOverModal({ show, result, onPlayAgain, onReturnToDashboard }) {
     if (!show) return null;
 
     const { outcome, stats } = result;
@@ -22,91 +22,61 @@ function GameOverModal({ show, result }) {
                 </div>
 
                 <div className="stats-container">
-                    <div className="stats-section life-section">
-                        <div className="life-stats">
-                            <div className="life-stat">
-                                <span className="stat-label">Your Life</span>
-                                <span className="stat-value">{stats.finalLife}</span>
-                            </div>
-                            <div className="life-divider">vs</div>
-                            <div className="life-stat">
-                                <span className="stat-label">Enemy Life</span>
-                                <span className="stat-value">{stats.enemyFinalLife}</span>
-                            </div>
-                        </div>
+                    <div className="stats-section">
+                        <h3>Life Stats</h3>
+                        <p>Your final LP: {stats.finalLife}</p>
+                        <p>Enemy final LP: {stats.enemyFinalLife}</p>
                     </div>
 
-                    <div className="stats-section combat-stats">
-                        <h2>Combat Statistics</h2>
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <span className="stat-label">Total Damage Dealt</span>
-                                <span className="stat-value">{stats.totalDamageDealt}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Highest Damage Turn</span>
-                                <span className="stat-value">{stats.highestDamageDealt}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Total Damage Taken</span>
-                                <span className="stat-value">{stats.totalDamageTaken}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Cards Played</span>
-                                <span className="stat-value">{stats.cardsPlayed}</span>
-                            </div>
-                        </div>
+                    <div className="stats-section">
+                        <h3>Combat Statistics</h3>
+                        <p>Highest damage turn: {stats.highestDamageDealt}</p>
+                        <p>Total damage taken: {stats.totalDamageTaken}</p>
                     </div>
 
-                    <div className="stats-section special-stats">
-                        <h2>Special Abilities</h2>
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <span className="stat-label">Thief Damage</span>
-                                <span className="stat-value">{stats.thiefDamage}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Guard Blocks</span>
-                                <span className="stat-value">{stats.guardBlocks}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Curse Damage</span>
-                                <span className="stat-value">{stats.curseDamage}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Enemy Cards Destroyed</span>
-                                <span className="stat-value">{stats.enemyCardsDestroyed}</span>
-                            </div>
-                        </div>
+                    <div className="stats-section">
+                        <h3>Card Stats</h3>
+                        <p>Cards played: {stats.cardsPlayed}</p>
+                        <p>Enemy cards destroyed: {stats.enemyCardsDestroyed}</p>
                     </div>
 
-                    <div className="stats-section game-stats">
-                        <h2>Game Overview</h2>
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <span className="stat-label">Total Rounds</span>
-                                <span className="stat-value">{stats.totalRounds}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Longest Round</span>
-                                <span className="stat-value">{stats.longestRound} turns</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Cards Lost</span>
-                                <span className="stat-value">{stats.cardsDestroyed}</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-label">Gems Earned</span>
-                                <span className="stat-value">{stats.gemsEarned} 💎</span>
-                            </div>
-                        </div>
+                    <div className="stats-section">
+                        <h3>Special Abilities</h3>
+                        <p>Thief damage: {stats.thiefDamage}</p>
+                        <p>Total damage blocked: {stats.guardBlocks}</p>
+                        <p>Curse damage: {stats.curseDamage}</p>
+                    </div>
+
+                    <div className="stats-section">
+                        <h3>MVP Card</h3>
+                        {stats.mvpCard && (
+                            <>
+                                <p className="mvp-name">{stats.mvpCard.name}</p>
+                                <p className="mvp-stats">
+                                    {stats.mvpCard.type === 'damage' 
+                                        ? `Dealt ${stats.mvpCard.value} damage`
+                                        : `Blocked ${stats.mvpCard.value} damage`}
+                                </p>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="stats-section">
+                        <h3>Overview</h3>
+                        <p>Total rounds: {stats.totalRounds}</p>
+                        {isVictory && (
+                            <p className="gems-earned">Gems earned: +{stats.gemsEarned}</p>
+                        )}
                     </div>
                 </div>
 
-                <div className="modal-footer">
-                    <div className="return-message">
-                        Returning to dashboard in a few seconds...
-                    </div>
+                <div className="modal-actions">
+                    <button className="play-again-btn" onClick={onPlayAgain}>
+                        Play Again
+                    </button>
+                    <button className="dashboard-btn" onClick={onReturnToDashboard}>
+                        Return to Dashboard
+                    </button>
                 </div>
             </div>
         </div>

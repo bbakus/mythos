@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
-import { useLocation, useParams, Link } from 'react-router-dom';
+import { useLocation, useParams, Link, useNavigate } from 'react-router-dom';
 import PurchaseModal from './PurchaseModal';
+import CardModal from './CardModal';
 import '../styles/marketplace.css'; // We'll create this CSS file next
 
 function Marketplace(){
@@ -29,6 +30,8 @@ function Marketplace(){
         cardImage: '',
         multipleCards: null
     });
+
+    const [selectedCard, setSelectedCard] = useState(null);
 
     // Function to open modal
     const openPurchaseModal = (name, image, cards = null) => {
@@ -410,81 +413,117 @@ function Marketplace(){
         });
     }
 
+    const handleCardClick = (card) => {
+        setSelectedCard(card);
+    };
+
+    const handleCloseCardModal = () => {
+        setSelectedCard(null);
+    };
+
     return(
-        <div className='marketplace-container'>
-            {/* Render the purchase modal component */}
-            <PurchaseModal 
-                isOpen={modal.isOpen} 
-                onClose={closeModal} 
-                cardName={modal.cardName} 
-                cardImage={modal.cardImage}
-                multipleCards={modal.multipleCards}
-            />
-            {/* Add a navigation bar at the top */}
-            <div className='nav-bar'>
-                <Link to={`/users/${userId}/dashboard`} state={{ user }}>Dashboard</Link>
-                <Link to={`/users/${userId}/inventory`} state={{ user }}>Inventory</Link>
-                <Link to={`/users/${userId}/marketplace`} state={{ user }} className="active">Marketplace</Link>
-                <Link to={`/users/${userId}/arena`} state={{ user }}>Arena</Link>
-            </div>
-            
-            <div className="user-info">
-                <p>Wallet: {wallet} gems</p>
-                {error && <p className="error-message">{error}</p>}
-            </div>
-            
-            <div className='deals'>
-                {showBoosterPack ?
-                (
-                    <div className="booster-pack">
-                        <h1>BOOSTER PACK</h1>
-                        <img src='/assets/images/misc/booster_packs.webp' alt='Booster pack'/>
-                        <h2>Price: 25 GEMS</h2>
-                   <button onClick={boosterPackBuy} className="buy-button">BUY</button>
+        <>
+            <div className='marketplace-root'></div>
+            <div className='marketplace-container'>
+                {/* Render the purchase modal component */}
+                <PurchaseModal 
+                    isOpen={modal.isOpen} 
+                    onClose={closeModal} 
+                    cardName={modal.cardName} 
+                    cardImage={modal.cardImage}
+                    multipleCards={modal.multipleCards}
+                />
+                <div className="header">
+                    <img src='/assets/images/misc/header-image.png' alt="Header"/>
                 </div>
-                ):(
-                    <div className='show-booster-pack'>
-                        {boosterPack.map((card, index) => (
-                            <img key={index} src={card.image} alt={card.name}/>
-                        ))}
+                {/* Add a navigation bar at the top */}
+                <div className='nav-bar'>
+                    <Link to={`/users/${userId}/dashboard`} state={{ user }}>Dashboard</Link>
+                    <Link to={`/users/${userId}/inventory`} state={{ user }}>Inventory</Link>
+                    <Link to={`/users/${userId}/marketplace`} state={{ user }} className="active">Marketplace</Link>
+                    <Link to={`/users/${userId}/arena`} state={{ user }}>Arena</Link>
+                </div>
+                
+                <div className="user-info">
+                    <p>Wallet: {wallet} gems</p>
+                    {error && <p className="error-message">{error}</p>}
+                </div>
+                
+                <div className='deals'>
+                    {showBoosterPack ?
+                    (
+                        <div className="booster-pack">
+                            <h1>BOOSTER PACK</h1>
+                            <img src='/assets/images/misc/booster_packs.webp' alt='Booster pack'/>
+                            <h2>Price: 25 GEMS</h2>
+                       <button onClick={boosterPackBuy} className="buy-button">BUY</button>
+                        </div>
+                    ):(
+                        <div className='show-booster-pack'>
+                            {boosterPack.map((card, index) => (
+                                <img key={index} src={card.image} alt={card.name}/>
+                            ))}
+                        </div>
+                    )}
+                    {mysteryCard ?
+                    (
+                        <div className='mystery-card'>
+                            <h1>You got {mysteryCardImage.name}!</h1>
+                            <img src={mysteryCardImage.image} alt={mysteryCardImage.name}/> 
+                        </div>
+                    ) :
+                    (<div className="mystery-card">
+                        <h1>MYSTERY CARD</h1>
+                        <img src='/assets/images/card_backs/CARDBACK.png' alt="Mystery card back"/>
+                        <h2>Price: 10 gems</h2>
+                        <button onClick={mysteryCardBuy} className="buy-button">BUY</button>
+                    </div>)}
+                    <div className='guard-pack'>
+                        <h1>GUARD BUNDLE</h1>
+                        <div className="guard-pack-images">
+                            {
+                                guardCards.map((card, index) => (
+                                    <img key={index} src={card.image} alt={`Guard card ${index}`} />
+                                ))
+                            }
+                        </div>
+                        <h2>Price: 20 GEMS</h2>
+                        <button onClick={guardBundleBuy} className="buy-button">BUY</button>
                     </div>
-                )}
-                {mysteryCard ?
-                (
-                    <div className='mystery-card'>
-                        <h1>You got {mysteryCardImage.name}!</h1>
-                        <img src={mysteryCardImage.image} alt={mysteryCardImage.name}/> 
-                    </div>
-                ) :
-                (<div className="mystery-card">
-                    <h1>MYSTERY CARD</h1>
-                    <img src='/assets/images/card_backs/CARDBACK.png' alt="Mystery card back"/>
-                    <h2>Price: 10 gems</h2>
-                    <button onClick={mysteryCardBuy} className="buy-button">BUY</button>
-                </div>)}
-                <div className='guard-pack'>
-                    <h1>GUARD BUNDLE</h1>
-                    <div className="guard-pack-images">
-                        {
-                            guardCards.map((card, index) => (
-                                <img key={index} src={card.image} alt={`Guard card ${index}`} />
-                            ))
-                        }
-                    </div>
-                    <h2>Price: 20 GEMS</h2>
-                    <button onClick={guardBundleBuy} className="buy-button">BUY</button>
+                </div>
+                <div className="cards-grid">
+                    {cards.map((card, index) => (
+                        <div 
+                            key={`card-${card.id}-${index}`} 
+                            className="card-container"
+                            onClick={() => handleCardClick(card)}
+                        >
+                            <img src={card.image} alt={card.name} />
+                            <div className="card-details">
+                                <div className="card-name">{card.name}</div>
+                                <div className="price">Price: {cardPrices[card.id] || 10} GEMS</div>
+                            </div>
+                            <button 
+                                className="buy-button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    cardBuy(card);
+                                }}
+                            >
+                                Buy Now
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </div>
-            <div className="cards-grid">
-                {cards.map((card, index) => (
-                    <div key={`card-${card.id}-${index}`} className='card-container'>
-                        <img src={card.image} alt={card.name} />
-                        <h2 className='price'>{cardPrices[card.id] || 10} GEMS</h2>
-                        <button onClick={() => cardBuy(card)} className="buy-button">BUY</button>
-                    </div>
-                ))}
-            </div>
-        </div>
+
+            {selectedCard && (
+                <CardModal 
+                    card={selectedCard}
+                    onClose={handleCloseCardModal}
+                />
+            )}
+        </>
     )
 }
 

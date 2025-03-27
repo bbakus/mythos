@@ -29,13 +29,28 @@ class User(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     wallet = db.Column(db.Integer, nullable=False)
+    wins = db.Column(db.Integer, default=0)
     
-   
     inventory = db.relationship('Inventory', back_populates='user', cascade='all, delete-orphan')
     decks = db.relationship('Deck', back_populates='user', cascade='all, delete-orphan')
+    sent_friend_requests = db.relationship('FriendRequest', foreign_keys='FriendRequest.sender_id', back_populates='sender', cascade='all, delete-orphan')
+    received_friend_requests = db.relationship('FriendRequest', foreign_keys='FriendRequest.receiver_id', back_populates='receiver', cascade='all, delete-orphan')
+    friends = db.relationship('User', secondary='friend_relationships',
+                            primaryjoin='User.id==friend_relationships.c.user_id',
+                            secondaryjoin='User.id==friend_relationships.c.friend_id',
+                            backref=db.backref('friend_of', lazy='dynamic'),
+                            lazy='dynamic')
     
-    
-    serialize_rules = ('-_password_hash', '-inventory', '-decks')
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'wallet': self.wallet,
+            'wins': self.wins,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
     
     @validates('wallet')
     def validate_wallet(self, key, wallet):
@@ -73,6 +88,18 @@ class User(db.Model, SerializerMixin):
         if not email or '@' not in email:
             raise ValueError("Valid email address required")
         return email
+    
+    @validates('wins')
+    def validate_wins(self, key, wins):
+        if wins is None:
+            return 0
+        try:
+            wins_int = int(wins)
+            if wins_int < 0:
+                return 0
+            return wins_int
+        except (ValueError, TypeError):
+            return 0
     
     @hybrid_property
     def password_hash(self):
@@ -188,6 +215,54 @@ class CardInDeck(db.Model, SerializerMixin):
     
     
     serialize_rules = ('-deck', '-card.cards_in_deck')
+
+
+    
+    
+
+
+    
+    
+
+
+class FriendRequest(db.Model, SerializerMixin):
+    __tablename__ = 'friend_requests'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    status = db.Column(db.String(20), default='pending')  # pending, accepted, rejected
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    sender = db.relationship('User', foreign_keys=[sender_id], back_populates='sent_friend_requests')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='received_friend_requests')
+    
+    serialize_rules = ('-sender.password_hash', '-receiver.password_hash')
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'sender': {
+                'id': self.sender.id,
+                'username': self.sender.username
+            },
+            'receiver': {
+                'id': self.receiver.id,
+                'username': self.receiver.username
+            },
+            'status': self.status,
+            'created_at': self.created_at.isoformat()
+        }
+
+# Association table for friend relationships
+friend_relationships = db.Table('friend_relationships',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('friend_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
+
+
+    
+    
 
 
     

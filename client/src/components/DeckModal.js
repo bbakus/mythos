@@ -314,11 +314,15 @@ function DeckModal({ onClose, userId, decks, setDecks, inventory }) {
     // Render based on current view
     if (view === 'decks') {
         return (
-            <div className="deck-modal-overlay">
-                <div className="deck-modal">
+            <div className="deck-modal-overlay" onClick={onClose}>
+                <div className="deck-modal" onClick={e => e.stopPropagation()}>
                     <div className="deck-modal-header">
                         <h2>Your Decks</h2>
-                        <button className="close-button" onClick={onClose}>×</button>
+                        <div className="close-button-wrapper">
+                            <div className="close-button-circle">
+                                <button className="close-button" onClick={onClose}>×</button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div className="decks-container">
@@ -374,8 +378,8 @@ function DeckModal({ onClose, userId, decks, setDecks, inventory }) {
         );
         
         return (
-            <div className="deck-modal-overlay">
-                <div className="deck-modal">
+            <div className="deck-modal-overlay" onClick={onClose}>
+                <div className="deck-modal" onClick={e => e.stopPropagation()}>
                     <div className="deck-modal-header">
                         <h2>
                             <input
@@ -395,7 +399,11 @@ function DeckModal({ onClose, userId, decks, setDecks, inventory }) {
                             >
                                 Back
                             </button>
-                            <button className="close-button" onClick={onClose}>×</button>
+                        </div>
+                        <div className="close-button-wrapper">
+                            <div className="close-button-circle">
+                                <button className="close-button" onClick={onClose}>×</button>
+                            </div>
                         </div>
                     </div>
                     
@@ -474,120 +482,135 @@ function DeckModal({ onClose, userId, decks, setDecks, inventory }) {
         const isDeckFull = selectedDeckCards.length >= 20;
         
         return (
-            <div className="add-cards-container">
-                <div className="inventory-with-sidebar">
-                    <div className="inventory-for-deck">
-                        <div className="inventory-header">
-                            <h2>Select Cards to Add</h2>
-                            {isDeckFull && (
-                                <div className="deck-full-warning">
-                                    Your deck is full (20/20 cards)
-                                </div>
-                            )}
+            <div className="deck-modal-overlay" onClick={onClose}>
+                <div className="deck-modal" onClick={e => e.stopPropagation()}>
+                    <div className="deck-modal-header">
+                        <h2>Select Cards to Add</h2>
+                        <div className="header-buttons">
+                            <div className="deck-size-counter">
+                                {selectedDeckCards.length}/20 Cards
+                            </div>
                         </div>
-                        <div className="inventory-cards">
-                            {inventory.map(item => {
-                                const cardCount = deckCardCounts[item.card.id] || 0;
-                                const canAddMore = cardCount < item.quantity && !isDeckFull;
-                                
-                                return (
-                                    <div key={item.id} className="inventory-card-item">
-                                        <div className="inventory-card-info">
-                                            <img 
-                                                src={item.card.image || '/assets/images/card_backs/CARDBACK.png'} 
-                                                alt={item.card.name || 'Card'} 
-                                                className="inventory-card-image"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = '/assets/images/card_backs/CARDBACK.png';
-                                                }}
-                                            />
-                                            <div className="inventory-card-details">
-                                                <div className="inventory-card-name">{item.card.name || 'Unknown Card'}</div>
-                                                <div className="inventory-card-stats">
-                                                    <span className="power">Power: {item.card.power || 0}</span>
-                                                    <span className="cost">Cost: {item.card.cost || 0}</span>
-                                                    <span className="quantity">In inventory: {item.quantity}</span>
-                                                    {cardCount > 0 && (
-                                                        <span className="in-deck">In deck: {cardCount}</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button 
-                                            className="add-card-btn"
-                                            onClick={() => handleAddCard(item)}
-                                            disabled={isAddingCard || !canAddMore}
-                                        >
-                                            {isDeckFull 
-                                                ? 'Deck Full' 
-                                                : !canAddMore 
-                                                    ? 'Max Added' 
-                                                    : isAddingCard 
-                                                        ? 'Adding...' 
-                                                        : 'Add Copy'}
-                                        </button>
-                                    </div>
-                                );
-                            })}
+                        <div className="close-button-wrapper">
+                            <div className="close-button-circle">
+                                <button className="close-button" onClick={onClose}>×</button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div className="deck-sidebar">
-                        <div className="deck-sidebar-header">
-                            <h3>Current Deck ({selectedDeckCards.length}/20)</h3>
-                            <button 
-                                className="done-adding-btn"
-                                onClick={() => setView('viewDeck')}
-                                disabled={isAddingCard}
-                            >
-                                Done
-                            </button>
-                        </div>
-                        <div className="deck-sidebar-cards">
-                            {selectedDeckCards.length === 0 ? (
-                                <div className="empty-sidebar-message">No cards added yet</div>
-                            ) : (
-                                // Group cards and show count
-                                Object.entries(
-                                    selectedDeckCards.reduce((grouped, card) => {
-                                        // Ensure card has required properties
-                                        const validCard = {
-                                            id: card.id,
-                                            name: card.name || 'Unknown Card',
-                                            image: card.image || '/assets/images/card_backs/CARDBACK.png',
-                                            power: card.power || 0,
-                                            cost: card.cost || 0
-                                        };
-                                        
-                                        if (!grouped[validCard.id]) {
-                                            grouped[validCard.id] = {
-                                                card: validCard,
-                                                count: 0
-                                            };
-                                        }
-                                        grouped[validCard.id].count++;
-                                        return grouped;
-                                    }, {})
-                                ).map(([cardId, { card, count }]) => (
-                                    <div key={cardId} className="sidebar-card-item">
-                                        <div className="sidebar-card-info">
-                                            <div className="sidebar-card-name">{card.name || 'Unknown Card'}</div>
-                                            <div className="sidebar-card-count">x{count}</div>
-                                        </div>
-                                        <div className="sidebar-card-buttons">
+                    <div className="inventory-with-sidebar">
+                        <div className="inventory-for-deck">
+                            <div className="inventory-header">
+                                <h2>Select Cards to Add</h2>
+                                {isDeckFull && (
+                                    <div className="deck-full-warning">
+                                        Your deck is full (20/20 cards)
+                                    </div>
+                                )}
+                            </div>
+                            <div className="inventory-cards">
+                                {inventory.map(item => {
+                                    const cardCount = deckCardCounts[item.card.id] || 0;
+                                    const canAddMore = cardCount < item.quantity && !isDeckFull;
+                                    
+                                    return (
+                                        <div key={item.id} className="inventory-card-item">
+                                            <div className="inventory-card-info">
+                                                <img 
+                                                    src={item.card.image || '/assets/images/card_backs/CARDBACK.png'} 
+                                                    alt={item.card.name || 'Card'} 
+                                                    className="inventory-card-image"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.src = '/assets/images/card_backs/CARDBACK.png';
+                                                    }}
+                                                />
+                                                <div className="inventory-card-details">
+                                                    <div className="inventory-card-name">{item.card.name || 'Unknown Card'}</div>
+                                                    <div className="inventory-card-stats">
+                                                        <span className="power">Power: {item.card.power || 0}</span>
+                                                        <span className="cost">Cost: {item.card.cost || 0}</span>
+                                                        <span className="quantity">In inventory: {item.quantity}</span>
+                                                        {cardCount > 0 && (
+                                                            <span className="in-deck">In deck: {cardCount}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <button 
-                                                className="sidebar-remove-btn"
-                                                onClick={() => handleRemoveCard(card.id)}
-                                                disabled={isAddingCard}
-                                                title="Remove one copy"
+                                                className="add-card-btn"
+                                                onClick={() => handleAddCard(item)}
+                                                disabled={isAddingCard || !canAddMore}
                                             >
-                                                -
+                                                {isDeckFull 
+                                                    ? 'Deck Full' 
+                                                    : !canAddMore 
+                                                        ? 'Max Added' 
+                                                        : isAddingCard 
+                                                            ? 'Adding...' 
+                                                            : 'Add Copy'}
                                             </button>
                                         </div>
-                                    </div>
-                                ))
-                            )}
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        
+                        <div className="deck-sidebar">
+                            <div className="deck-sidebar-header">
+                                <h3>Current Deck ({selectedDeckCards.length}/20)</h3>
+                                <button 
+                                    className="done-adding-btn"
+                                    onClick={() => setView('viewDeck')}
+                                    disabled={isAddingCard}
+                                >
+                                    Done
+                                </button>
+                            </div>
+                            <div className="deck-sidebar-cards">
+                                {selectedDeckCards.length === 0 ? (
+                                    <div className="empty-sidebar-message">No cards added yet</div>
+                                ) : (
+                                    // Group cards and show count
+                                    Object.entries(
+                                        selectedDeckCards.reduce((grouped, card) => {
+                                            // Ensure card has required properties
+                                            const validCard = {
+                                                id: card.id,
+                                                name: card.name || 'Unknown Card',
+                                                image: card.image || '/assets/images/card_backs/CARDBACK.png',
+                                                power: card.power || 0,
+                                                cost: card.cost || 0
+                                            };
+                                            
+                                            if (!grouped[validCard.id]) {
+                                                grouped[validCard.id] = {
+                                                    card: validCard,
+                                                    count: 0
+                                                };
+                                            }
+                                            grouped[validCard.id].count++;
+                                            return grouped;
+                                        }, {})
+                                    ).map(([cardId, { card, count }]) => (
+                                        <div key={cardId} className="sidebar-card-item">
+                                            <div className="sidebar-card-info">
+                                                <div className="sidebar-card-name">{card.name || 'Unknown Card'}</div>
+                                                <div className="sidebar-card-count">x{count}</div>
+                                            </div>
+                                            <div className="sidebar-card-buttons">
+                                                <button 
+                                                    className="sidebar-remove-btn"
+                                                    onClick={() => handleRemoveCard(card.id)}
+                                                    disabled={isAddingCard}
+                                                    title="Remove one copy"
+                                                >
+                                                    -
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

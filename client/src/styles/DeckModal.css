@@ -33,6 +33,7 @@
   padding: 15px 20px;
   background: linear-gradient(to right, #1a1a1a, #333);
   border-bottom: 2px solid #444;
+  position: relative;
 }
 
 .deck-modal-header h2 {
@@ -46,6 +47,8 @@
 .header-buttons {
   display: flex;
   align-items: center;
+  gap: 15px;
+  margin-right: 60px; /* Make space for close button */
 }
 
 .deck-size-counter {
@@ -55,26 +58,57 @@
   border-radius: 15px;
   font-size: 0.9rem;
   font-weight: bold;
-  margin-right: 15px;
   border: 1px solid #444;
 }
 
-.close-button, .back-button {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.5rem;
-  cursor: pointer;
+.close-button-wrapper {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+}
+
+.close-button-circle {
+  width: 35px;
+  height: 35px;
+  background: #e94560;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s;
-  margin-left: 15px;
+}
+
+.close-button-circle:hover {
+  background: #c21e56;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.close-button {
+  width: 0px;
+  height: 0px;  
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+  
 }
 
 .back-button {
-  font-size: 1rem;
+  background: none;
+  border: none;
   color: #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.close-button:hover, .back-button:hover {
+.back-button:hover {
   color: #e94560;
   transform: scale(1.1);
 }

@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Use absolute imports
 from flask import Flask
-from server.models import db, User, Card, Inventory, Deck, CardInDeck
+from server.models import db, User, Card, Inventory, Deck, CardInDeck, FriendRequest
 from server.config import Config
 
 app = Flask(__name__)

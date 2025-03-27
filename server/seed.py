@@ -17,24 +17,33 @@ from server.models import db, User, Card, Inventory, Deck, CardInDeck
 
 
 def create_users():
-    
     users = []
     
-    existing_user = User.query.filter_by(email="test@example.com").first()
-    if existing_user:
-        
-        return []
-        
+    # Create test users if they don't exist
+    test_users = [
+        {
+            "username": "testuser",
+            "email": "test@example.com",
+            "password": "password",
+            "wallet": 100
+        }
+    ]
     
-    test_user = User(
-        username="testuser",
-        email="test@example.com"
-    )
-    test_user.password_hash = "password"
-    users.append(test_user)
+    for user_data in test_users:
+        existing_user = User.query.filter_by(email=user_data["email"]).first()
+        if not existing_user:
+            new_user = User(
+                username=user_data["username"],
+                email=user_data["email"],
+                wallet=user_data["wallet"]
+            )
+            new_user.password_hash = user_data["password"]
+            users.append(new_user)
     
-    db.session.add_all(users)
-    db.session.commit()
+    if users:
+        db.session.add_all(users)
+        db.session.commit()
+        print("Created users:", [user.username for user in users])
     
     return users
 

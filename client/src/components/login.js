@@ -62,10 +62,10 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log('Attempting login with:', loginData);
     
     try {
-    
-      const response = await fetch('/auth/login', {
+      const response = await fetch('http://localhost:5555/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,29 +73,26 @@ function Login() {
         body: JSON.stringify(loginData),
       });
       
+      console.log('Login response status:', response.status);
       
       if (response.ok) {
         const responseText = await response.text();
-     
+        console.log('Login response text:', responseText);
         
         let user;
         try {
           user = JSON.parse(responseText);
-         
+          console.log('Parsed user:', user);
         } catch (error) {
-          
+          console.error('Error parsing response:', error);
           setErrors({ login: "Failed to parse server response" });
           return;
         }
         
         setUser(user);
-        
-        // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify(user));
-      
         navigate(`/users/${user.id}/dashboard`, {state: { user: user }});
       } else {
-        
         const errorText = await response.text();
         console.error("Error response text:", errorText);
         
@@ -132,7 +129,7 @@ function Login() {
     console.log("Sending signup data:", signupPayload);
     
     try {
-      const response = await fetch('/users', {
+      const response = await fetch('http://localhost:5555/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,11 +143,7 @@ function Login() {
         const user = await response.json();
         console.log("Signup successful, user data:", user);
         setUser(user);
-        
-        // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify(user));
-        
-        // Navigate to the user-specific dashboard instead of login
         navigate(`/users/${user.id}/dashboard`, {state: { user: user }});
       } else {
         const errorText = await response.text();

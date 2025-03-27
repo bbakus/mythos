@@ -13,20 +13,12 @@ function Dashboard(){
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     
     useEffect(() => {
-        // Check if this is the user's first visit
-        const hasSeenWelcome = localStorage.getItem(`welcomed_${userId}`);
-        
         // First try to get data from localStorage
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             try {
                 const parsedUser = JSON.parse(storedUser);
                 setUserData(parsedUser);
-                
-                // Show welcome gift if user hasn't seen it
-                if (!hasSeenWelcome) {
-                    setShowWelcomeGift(true);
-                }
             } catch (error) {
                 console.error("Error parsing user from localStorage:", error);
             }
@@ -39,8 +31,8 @@ function Dashboard(){
                     setUserData(data);
                     localStorage.setItem('user', JSON.stringify(data));
                     
-                    // Show welcome gift if user hasn't seen it
-                    if (!hasSeenWelcome) {
+                    // Only show welcome gift for new users (wallet = 100)
+                    if (data.wallet === 100) {
                         setShowWelcomeGift(true);
                     }
                 })
@@ -49,8 +41,6 @@ function Dashboard(){
     }, [userId, userData.id]);
 
     const handleCloseWelcomeGift = () => {
-        // Mark that the user has seen the welcome gift
-        localStorage.setItem(`welcomed_${userId}`, 'true');
         setShowWelcomeGift(false);
     };
 
@@ -125,6 +115,7 @@ function Dashboard(){
                     <Link to={`/users/${userId}/inventory`} state={{ user: userData }}>Inventory</Link>
                     <Link to={`/users/${userId}/marketplace`} state={{ user: userData }}>Marketplace</Link>
                     <Link to={`/users/${userId}/arena`} state={{ user: userData }}>Arena</Link>
+                    <Link to={`/users/${userId}/friends`} state={{ user: userData }}>Friends</Link>
                     <button onClick={handleLogout} className="logout-button">Logout</button>
                 </div>
                 
@@ -148,7 +139,7 @@ function Dashboard(){
                 </div>
                 
                 <div className='dashboard-background'>
-                    <img src="https://www.brownandhudson.com/assets/uploads/case-studies/here_be_dragons.jpg" alt="Background"/>
+                    <img src="/assets/images/misc/dashboard-background.png" alt="Background"/>
                 </div>
             </div>
         </div>

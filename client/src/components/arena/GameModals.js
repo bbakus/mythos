@@ -40,6 +40,7 @@ function GameModals({
     onRetainCard,
     onCloseRetainModal,
     onReturnToDashboard,
+    onPlayAgain,
     setShowGuardBlockModal
 }) {
     return (
@@ -185,10 +186,14 @@ function GameModals({
                 </div>
             )}
             
-            <GameOverModal 
-                show={showGameOverModal}
-                result={gameResult}
-            />
+            {showGameOverModal && (
+                <GameOverModal 
+                    show={showGameOverModal}
+                    result={gameResult}
+                    onPlayAgain={onPlayAgain}
+                    onReturnToDashboard={onReturnToDashboard}
+                />
+            )}
             
             {showGuardBlockModal && (
                 <div className="modal-overlay">

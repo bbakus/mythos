@@ -3,26 +3,23 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 import Login from './components/login';
 import Dashboard from './components/dashboard';
 import Inventory from './components/inventory';
-import DeckBuilder from './components/deck-builder';
-import Marketplace from './components/marketplace';
 import Arena from './components/arena';
+import Marketplace from './components/marketplace';
+import Friends from './components/Friends';
 import FontLoader from './components/FontLoader';
 import './App.css';
 
 // Protected route component that redirects to login if not authenticated
-function ProtectedRoute({ children }) {
+const ProtectedRoute = ({ children }) => {
   const location = useLocation();
+  const user = localStorage.getItem('user');
   
-  // Check if we have user data in the location state
-  const isAuthenticated = location.state && location.state.user;
-  
-  if (!isAuthenticated) {
-    // Redirect to login if not authenticated, but save the attempted path
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
+  
   return children;
-}
+};
 
 function App() {
   return (
@@ -54,12 +51,6 @@ function App() {
             </ProtectedRoute>
           } />
           
-          <Route path="/users/:userId/deck-builder" element={
-            <ProtectedRoute>
-              <DeckBuilder />
-            </ProtectedRoute>
-          } />
-          
           <Route path="/users/:userId/marketplace" element={
             <ProtectedRoute>
               <Marketplace />
@@ -72,14 +63,16 @@ function App() {
             </ProtectedRoute>
           } />
           
-          {/* Fallback route */}
-          <Route path="/" element={<Navigate replace to="/login" />} />
+          <Route path="/users/:userId/friends" element={
+            <ProtectedRoute>
+              <Friends />
+            </ProtectedRoute>
+          } />
           
-          {/* Redirect old routes to new ones with user ID */}
-          <Route path="/dashboard" element={<Navigate to="/login" replace />} />
-          <Route path="/inventory" element={<Navigate to="/login" replace />} />
-          <Route path="/deck-builder" element={<Navigate to="/login" replace />} />
+          {/* Public routes that redirect to login if not authenticated */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/marketplace" element={<Navigate to="/login" replace />} />
+          <Route path="/inventory" element={<Navigate to="/login" replace />} />
           <Route path="/arena" element={<Navigate to="/login" replace />} />
         </Routes>
       </div>

@@ -81,18 +81,15 @@ export function useGameLogic(userId, userData) {
 
     // Add new state for game statistics
     const [gameStats, setGameStats] = useState({
-        totalDamageDealt: 0,
         totalDamageTaken: 0,
         cardsPlayed: 0,
-        cardsDestroyed: 0,
         enemyCardsDestroyed: 0,
         highestDamageDealt: 0,
-        roundsPlayed: 0,
         thiefDamage: 0,
         guardBlocks: 0,
         curseDamage: 0,
-        longestRound: 0,
-        currentRoundTurns: 0
+        totalRounds: 0,
+        mvpCard: null
     });
 
     // Fetch user decks on component mount
@@ -188,7 +185,6 @@ export function useGameLogic(userId, userData) {
     // Monitor turn counts for battle phase transition
     useEffect(() => {
         if (gamePhase === 'placement' && playerTurnCount >= 3 && opponentTurnCount >= 3) {
-            setGameMessage(`Placement phase complete! Preparing for battle...`);
             setTimeout(() => {
                 initiateBattlePhase();
             }, 1000);
@@ -211,6 +207,13 @@ export function useGameLogic(userId, userData) {
             }, 500);
         }
     }, [opponentAttackPhase]);
+
+    // In the useEffect for game phase, add the initial message
+    useEffect(() => {
+        if (gamePhase === 'placement' && playerTurnCount === 0) {
+            setGameMessage('Drag cards to open lanes');
+        }
+    }, [gamePhase, playerTurnCount]);
 
     // Navigation handlers
     const handleReturnToDashboard = () => {
@@ -249,29 +252,26 @@ export function useGameLogic(userId, userData) {
 
     // Handle victory and defeat
     const handleVictory = () => {
-        setGameMessage("Victory! You have defeated your opponent!");
         setGameOver(true);
         setGameResult({
             outcome: 'victory',
             stats: {
                 finalLife: playerLife,
                 enemyFinalLife: opponentLife,
-                totalDamageDealt: gameStats.totalDamageDealt || 0,
                 highestDamageDealt: gameStats.highestDamageDealt || 0,
                 totalDamageTaken: gameStats.totalDamageTaken || 0,
                 cardsPlayed: gameStats.cardsPlayed || 0,
-                cardsDestroyed: gameStats.cardsDestroyed || 0,
+                enemyCardsDestroyed: gameStats.enemyCardsDestroyed || 0,
                 thiefDamage: gameStats.thiefDamage || 0,
                 guardBlocks: gameStats.guardBlocks || 0,
                 curseDamage: gameStats.curseDamage || 0,
                 totalRounds: roundCount,
-                longestRound: gameStats.longestRound || 0,
-                gemsEarned: 30
+                gemsEarned: 30,
+                mvpCard: gameStats.mvpCard
             }
         });
         setShowGameOverModal(true);
         
-        // Award 30 gems to the player's wallet
         const newWallet = userData.wallet + 30;
         fetch(`/users/${userId}`, {
             method: 'PATCH',
@@ -297,38 +297,49 @@ export function useGameLogic(userId, userData) {
         .catch(error => {
             console.error("Error updating wallet:", error);
         });
-        
-        setTimeout(() => {
-            navigate(`/users/${userId}/dashboard`, { state: { user: userData } });
-        }, 10000);
     };
 
     const handleDefeat = () => {
-        setGameMessage("Defeat! Your opponent has defeated you!");
         setGameOver(true);
         setGameResult({
             outcome: 'defeat',
             stats: {
                 finalLife: playerLife,
                 enemyFinalLife: opponentLife,
-                totalDamageDealt: gameStats.totalDamageDealt || 0,
                 highestDamageDealt: gameStats.highestDamageDealt || 0,
                 totalDamageTaken: gameStats.totalDamageTaken || 0,
                 cardsPlayed: gameStats.cardsPlayed || 0,
-                cardsDestroyed: gameStats.cardsDestroyed || 0,
+                enemyCardsDestroyed: gameStats.enemyCardsDestroyed || 0,
                 thiefDamage: gameStats.thiefDamage || 0,
                 guardBlocks: gameStats.guardBlocks || 0,
                 curseDamage: gameStats.curseDamage || 0,
                 totalRounds: roundCount,
-                longestRound: gameStats.longestRound || 0,
-                gemsEarned: 0
+                gemsEarned: 0,
+                mvpCard: gameStats.mvpCard
             }
         });
         setShowGameOverModal(true);
-        
-        setTimeout(() => {
-            navigate(`/users/${userId}/dashboard`, { state: { user: userData } });
-        }, 10000);
+    };
+
+    const handlePlayAgain = () => {
+        // Reset game state
+        setGameOver(false);
+        setShowGameOverModal(false);
+        setShowDeckSelectionModal(true);
+        setPlayerLife(20);
+        setOpponentLife(20);
+        setRoundCount(0);
+        setGameStats({
+            totalDamageTaken: 0,
+            cardsPlayed: 0,
+            enemyCardsDestroyed: 0,
+            highestDamageDealt: 0,
+            thiefDamage: 0,
+            guardBlocks: 0,
+            curseDamage: 0,
+            totalRounds: 0,
+            mvpCard: null
+        });
     };
 
     // Display game messages
@@ -362,7 +373,6 @@ export function useGameLogic(userId, userData) {
             
             const data = await response.json();
             if (!data || data.length === 0) {
-                setGameMessage("No cards found in this deck. Please select another deck.");
                 return;
             }
             
@@ -409,11 +419,9 @@ export function useGameLogic(userId, userData) {
             setGamePhase('init');
             setTimeout(() => {
                 setShowCoinTossModal(true);
-                setGameMessage('Let\'s determine who goes first with a coin toss!');
             }, 100);
         } catch (error) {
             console.error('Error loading deck:', error);
-            setGameMessage('Error loading cards. Please try again.');
         }
     };
 
@@ -456,7 +464,6 @@ export function useGameLogic(userId, userData) {
         
         if (!remainingDeck || remainingDeck.length === 0) {
             console.log("No cards in deck!");
-            setGameMessage("No cards available to draw. Please select a different deck.");
             return;
         }
         
@@ -484,7 +491,6 @@ export function useGameLogic(userId, userData) {
         
         if (!opponentDeck || opponentDeck.length === 0) {
             console.log("Failed to generate opponent deck");
-            setGameMessage("Failed to generate opponent's deck. Please try again.");
             return;
         }
         
@@ -503,10 +509,6 @@ export function useGameLogic(userId, userData) {
         // Set initial turn state based on coin toss result
         const playerFirst = coinTossResult === 'heads';
         setIsPlayerTurn(playerFirst);
-        
-        setGameMessage(playerFirst 
-            ? "Your turn: Place a card in one of the lanes. (Turn 1 of 3)" 
-            : "Opponent's turn: They are placing a card... (Turn 1 of 3)");
         
         if (!playerFirst) {
             setTimeout(() => {
@@ -631,62 +633,36 @@ export function useGameLogic(userId, userData) {
 
     // Handle coin toss
     const handleCoinToss = () => {
-        console.log("Starting coin toss. Current game phase:", gamePhase);
-        setGameMessage("Tossing the coin...");
-        
-        // First show the animation and result
         setTimeout(() => {
             const tossResult = Math.random() < 0.5 ? 'heads' : 'tails';
-            console.log("Coin toss result:", tossResult);
             setCoinTossResult(tossResult);
             
             const playerFirst = tossResult === 'heads';
             setIsPlayerTurn(playerFirst);
             
-            setGameMessage(playerFirst 
-                ? "Coin shows Heads! You go first." 
-                : "Coin shows Tails! Opponent goes first.");
-            
-            // Wait for the result to be shown before transitioning
             setTimeout(() => {
                 setShowCoinTossModal(false);
                 
-                // Show next modal based on game phase
                 if (gamePhase === 'init') {
-                    console.log("Initial game phase - showing draw hand modal");
                     setShowDrawHandModal(true);
-                    setGameMessage('Now draw your first hand to begin the game!');
                 } else {
-                    console.log("New round phase - showing new round modal");
                     setShowNewRoundModal(true);
                     setGamePhase('draw');
-                    setGameMessage(`Round ${roundCount} begins! Draw your hand for the new round.`);
                 }
-            }, 2000); // Give time to see the result
-        }, 1500); // Time for coin toss animation
+            }, 2000);
+        }, 1500);
     };
 
     // Handle opponent's card placement
     const handleOpponentPlacement = () => {
-        console.log("handleOpponentPlacement called");
-        console.log("Opponent's hand:", opponentHand);
-        console.log("Opponent's mana:", opponentMana);
-        console.log("Opponent's turn count:", opponentTurnCount);
-        console.log("Enemy lane cards:", enemyLaneCards);
-        
         if (battleInitiated || gamePhase === 'battle') {
-            console.log("Battle already initiated or in battle phase");
             return;
         }
         
         if (opponentTurnCount >= 3) {
-            console.log("Opponent has used all turns");
             setTimeout(() => {
-                setGameMessage(`Placement phase complete! (3 turns each) Preparing for battle...`);
-                setTimeout(() => {
-                    initiateBattlePhase();
-                }, 1000);
-            }, 500);
+                initiateBattlePhase();
+            }, 1000);
             return;
         }
         
@@ -694,23 +670,18 @@ export function useGameLogic(userId, userData) {
             const availableLanes = enemyLaneCards.map((card, index) => 
                 card === null ? index : null).filter(lane => lane !== null);
             
-            console.log("Available lanes:", availableLanes);
-            
             if (availableLanes.length > 0) {
                 const laneIndex = availableLanes[Math.floor(Math.random() * availableLanes.length)];
                 
                 const affordableCards = opponentHand.filter(card => card.cost <= opponentMana);
-                console.log("Affordable cards:", affordableCards);
                 
                 if (affordableCards.length > 0) {
                     const cardIndex = Math.floor(Math.random() * affordableCards.length);
                     const cardToPlace = affordableCards[cardIndex];
-                    console.log("Card to place:", cardToPlace);
                     
-                    // Create a face-down version of the card while preserving the original image
                     const faceDownCard = {
                         ...cardToPlace,
-                        originalImage: cardToPlace.image, // Store the original image path
+                        originalImage: cardToPlace.image,
                         image: "/assets/images/card_backs/CARDBACK.png",
                         revealed: false
                     };
@@ -723,11 +694,6 @@ export function useGameLogic(userId, userData) {
                     setOpponentHand(newHand);
                     
                     setOpponentMana(prevMana => prevMana - cardToPlace.cost);
-                    
-                    // Add a delay to show the card being placed
-                    setTimeout(() => {
-                        setGameMessage(`Opponent placed a card face down in lane ${laneIndex + 1}`);
-                    }, 500);
                 }
             }
         }
@@ -737,18 +703,12 @@ export function useGameLogic(userId, userData) {
         
         if (playerTurnCount >= 3 && newOpponentTurnCount >= 3) {
             setTimeout(() => {
-                setGameMessage(`Placement phase complete! (3 turns each) Preparing for battle...`);
-                setTimeout(() => {
-                    initiateBattlePhase();
-                }, 1000);
-            }, 500);
+                initiateBattlePhase();
+            }, 1000);
             return;
         }
         
         setIsPlayerTurn(true);
-        setTimeout(() => {
-            setGameMessage(`Your turn: Place a card in an available lane or end turn. (Turn ${playerTurnCount + 1} of 3)`);
-        }, 1000);
     };
 
     // Handle player pass turn
@@ -763,40 +723,32 @@ export function useGameLogic(userId, userData) {
         
         if (playerTurnCount >= 3) {
             if (opponentTurnCount >= 3) {
-                setGameMessage(`Placement phase complete! (3 turns each) Preparing for battle...`);
                 setTimeout(() => {
                     initiateBattlePhase();
                 }, 1000);
             } else {
                 setIsPlayerTurn(false);
                 setTimeout(() => {
-                    setGameMessage(`Opponent's turn: They are placing a card... (Turn ${opponentTurnCount + 1} of 3)`);
-                    setTimeout(handleOpponentPlacement, 1000);
-                }, 500);
+                    handleOpponentPlacement();
+                }, 1000);
             }
             return;
         }
-        
-        setGameMessage("You end your turn.");
         
         const newPlayerTurnCount = playerTurnCount + 1;
         setPlayerTurnCount(newPlayerTurnCount);
         
         if (newPlayerTurnCount >= 3 && opponentTurnCount >= 3) {
             setTimeout(() => {
-                setGameMessage(`Placement phase complete! (3 turns each) Preparing for battle...`);
-                setTimeout(() => {
-                    initiateBattlePhase();
-                }, 1000);
-            }, 500);
+                initiateBattlePhase();
+            }, 1000);
             return;
         }
         
         setIsPlayerTurn(false);
         setTimeout(() => {
-            setGameMessage(`Opponent's turn: They are placing a card... (Turn ${opponentTurnCount + 1} of 3)`);
-            setTimeout(handleOpponentPlacement, 1000);
-        }, 500);
+            handleOpponentPlacement();
+        }, 1000);
     };
 
     // Handle card drag start
@@ -834,7 +786,6 @@ export function useGameLogic(userId, userData) {
         e.preventDefault();
         
         if (!isPlayerTurn || gamePhase !== 'placement') {
-            setGameMessage("It's not your turn to place a card yet!");
             return;
         }
         
@@ -843,12 +794,10 @@ export function useGameLogic(userId, userData) {
         }
         
         if (playerTurnCount >= 3) {
-            setGameMessage("You've already used all 3 of your placement turns!");
             return;
         }
         
         if (playerLaneCards[laneIndex] !== null) {
-            setGameMessage('There is already a card in this lane!');
             return;
         }
         
@@ -857,7 +806,6 @@ export function useGameLogic(userId, userData) {
         }
         
         if (draggedCard.cost > playerMana) {
-            setGameMessage(`Not enough mana to play this card! (Need ${draggedCard.cost}, have ${playerMana})`);
             return;
         }
         
@@ -872,39 +820,31 @@ export function useGameLogic(userId, userData) {
         
         setDraggedCard(null);
         
-        // Track stats for cards played
         setGameStats(prev => ({
             ...prev,
             cardsPlayed: prev.cardsPlayed + 1,
             currentRoundTurns: prev.currentRoundTurns + 1
         }));
         
-        setGameMessage(`Card placed in lane ${laneIndex + 1}!`);
-        
         const newPlayerTurnCount = playerTurnCount + 1;
         setPlayerTurnCount(newPlayerTurnCount);
         
         if (newPlayerTurnCount >= 3 && opponentTurnCount >= 3) {
             setTimeout(() => {
-                setGameMessage(`Placement phase complete! (3 turns each) Preparing for battle...`);
-                setTimeout(() => {
-                    initiateBattlePhase();
-                }, 1000);
-            }, 500);
+                initiateBattlePhase();
+            }, 1000);
             return;
         }
         
         setIsPlayerTurn(false);
         setTimeout(() => {
-            setGameMessage(`Opponent's turn: They are placing a card... (Turn ${opponentTurnCount + 1} of 3)`);
-            setTimeout(handleOpponentPlacement, 1000);
-        }, 500);
+            handleOpponentPlacement();
+        }, 1000);
     };
 
     // Handle retracting a card
     const handleRetractCard = (laneIndex) => {
         if (!isPlayerTurn || gamePhase !== 'placement') {
-            setGameMessage("You can only retract cards during your turn in the placement phase!");
             return;
         }
         
@@ -919,8 +859,6 @@ export function useGameLogic(userId, userData) {
         const newLaneCards = [...playerLaneCards];
         newLaneCards[laneIndex] = null;
         setPlayerLaneCards(newLaneCards);
-        
-        setGameMessage(`Card returned to hand, ${cardToRetract.cost} mana refunded. You can place a different card.`);
     };
 
     // Handle battle phase
@@ -932,11 +870,7 @@ export function useGameLogic(userId, userData) {
         setBattleInitiated(true);
         
         const playerFirst = coinTossResult === 'heads';
-        displayGameMessage(playerFirst ? 
-            "Battle Phase begins! You attack first!" : 
-            "Battle Phase begins! Opponent attacks first!");
         
-        // Reveal opponent's cards
         const revealedEnemyCards = enemyLaneCards.map(card => {
             if (!card) return null;
             
@@ -944,7 +878,7 @@ export function useGameLogic(userId, userData) {
             
             return {
                 ...card,
-                image: card.originalImage, // Restore the original image
+                image: card.originalImage,
                 revealed: true
             };
         });
@@ -953,10 +887,8 @@ export function useGameLogic(userId, userData) {
         
         setTimeout(() => {
             if (playerFirst) {
-                displayGameMessage("Your Attack Phase begins!");
                 setPlayerAttackPhase(true);
             } else {
-                displayGameMessage("Opponent's Attack Phase begins!");
                 setOpponentAttackPhase(true);
             }
         }, 1500);
@@ -1143,15 +1075,39 @@ export function useGameLogic(userId, userData) {
                 }
 
                 // Update stats after the round
-                setGameStats(prev => ({
-                    ...prev,
-                    totalDamageDealt: prev.totalDamageDealt + roundDamage,
-                    highestDamageDealt: Math.max(prev.highestDamageDealt, roundDamage),
-                    enemyCardsDestroyed: prev.enemyCardsDestroyed + cardsDestroyedThisRound,
-                    thiefDamage: prev.thiefDamage + roundThiefDamage,
-                    guardBlocks: prev.guardBlocks + roundGuardBlocks,
-                    curseDamage: prev.curseDamage + roundCurseDamage
-                }));
+                setGameStats(prev => {
+                    const newStats = {
+                        ...prev,
+                        highestDamageDealt: Math.max(prev.highestDamageDealt, roundDamage),
+                        enemyCardsDestroyed: prev.enemyCardsDestroyed + cardsDestroyedThisRound,
+                        thiefDamage: prev.thiefDamage + roundThiefDamage,
+                        guardBlocks: prev.guardBlocks + roundGuardBlocks,
+                        curseDamage: prev.curseDamage + roundCurseDamage
+                    };
+
+                    // Update MVP for damage dealt
+                    if (roundDamage > 0 && (!prev.mvpCard || roundDamage > prev.mvpCard.value)) {
+                        // Find the card that dealt the most damage
+                        let mvpCard = null;
+                        let maxDamage = 0;
+                        playerLaneCards.forEach(card => {
+                            if (card && card.power > maxDamage) {
+                                maxDamage = card.power;
+                                mvpCard = card;
+                            }
+                        });
+
+                        if (mvpCard) {
+                            newStats.mvpCard = {
+                                name: mvpCard.name,
+                                value: roundDamage,
+                                type: 'damage'
+                            };
+                        }
+                    }
+
+                    return newStats;
+                });
             }, 1000);
         }, 1000);
     };
@@ -1161,16 +1117,13 @@ export function useGameLogic(userId, userData) {
         if (!opponentAttackPhase) return;
 
         setOpponentHasAttacked(true);
-        const attackResults = [];  // Initialize attackResults array
+        const attackResults = [];
+        let roundGuardBlocks = 0;
 
         // Guard cards can only attack empty lanes
         const activeOpponentCards = enemyLaneCards.map((card, index) => {
             if (!card) return false;
-            if (card.guard) {
-                // Guard can only attack if opposing lane is empty
-                return playerLaneCards[index] === null;
-            }
-            return true;
+            return true;  // Allow all cards to attack, including guards
         });
         setAttackingCards({ player: [false, false, false], enemy: activeOpponentCards });
         
@@ -1190,56 +1143,43 @@ export function useGameLogic(userId, userData) {
 
             enemyLaneCards.forEach((enemyCard, index) => {
                 if (enemyCard === null) return;
-                // Guard cards can only attack empty lanes
-                if (enemyCard.guard && playerLaneCards[index] !== null) return;
 
                 const playerCard = playerLaneCards[index];
                 let damage = enemyCard.power || 1;
 
-                // Handle Thief attribute
-                if (enemyCard.thief) {
-                    // Check for Guard in adjacent lanes AND in the current lane
+                if (playerCard === null) {
+                    // Direct attack if no defending card
+                    damageTaken += damage;
+                    attackResults.push(`Lane ${index + 1}: ${enemyCard.name} deals ${damage} direct damage!`);
+                } else {
+                    // Check for guard blocks first
                     const leftGuard = index > 0 && playerLaneCards[index - 1]?.guard && newGuardBlocks[index - 1] < 3;
                     const rightGuard = index < 2 && playerLaneCards[index + 1]?.guard && newGuardBlocks[index + 1] < 3;
-                    const currentLaneGuard = playerCard?.guard && newGuardBlocks[index] < 3;
-                    
-                    // A thief is blocked if there's a guard in their lane or adjacent lanes
-                    if (!currentLaneGuard && !leftGuard && !rightGuard) {
-                        damageTaken += damage;
-                        attackResults.push(`Lane ${index + 1}: Enemy Thief ${enemyCard.name} bypasses defense and deals ${damage} direct damage!`);
-                        return;  // Important: return here to prevent further combat
-                    } else {
-                        // Determine which guard blocks (prioritize current lane, then left, then right)
-                        let blockingGuardIndex;
-                        let blockingGuard;
-                        let blockMessage;
+                    const currentGuard = playerCard.guard && newGuardBlocks[index] < 3;
+                    const hasGuardBlock = currentGuard || leftGuard || rightGuard;
 
-                        if (currentLaneGuard) {
-                            blockingGuardIndex = index;
-                            blockingGuard = playerCard;
-                            blockMessage = `Lane ${index + 1}: Your Guard ${playerCard.name} blocks the Thief!`;
-                        } else if (leftGuard) {
-                            blockingGuardIndex = index - 1;
-                            blockingGuard = playerLaneCards[index - 1];
-                            blockMessage = `Lane ${index + 1}: Your Guard from lane ${index} blocks the Thief!`;
-                        } else {
-                            blockingGuardIndex = index + 1;
-                            blockingGuard = playerLaneCards[index + 1];
-                            blockMessage = `Lane ${index + 1}: Your Guard from lane ${index + 2} blocks the Thief!`;
-                        }
-
-                        newGuardBlocks[blockingGuardIndex]++;
+                    if (hasGuardBlock) {
+                        // Determine which guard blocks
+                        let blockingGuardIndex = currentGuard ? index : (leftGuard ? index - 1 : index + 1);
+                        let blockingGuard = currentGuard ? playerCard : (leftGuard ? playerLaneCards[index - 1] : playerLaneCards[index + 1]);
                         
-                        // Check if thief should be destroyed
-                        const thiefPower = enemyCard.power || 1;
+                        newGuardBlocks[blockingGuardIndex]++;
+                        roundGuardBlocks++;
+                        
+                        const blockMessage = currentGuard 
+                            ? `Lane ${index + 1}: Your Guard ${playerCard.name} blocks the attack!`
+                            : `Lane ${index + 1}: Your Guard from lane ${blockingGuardIndex + 1} blocks the attack!`;
+                        
+                        // Check if attacking card should be destroyed
+                        const attackerPower = enemyCard.power || 1;
                         const guardPower = blockingGuard.power || 1;
                         
-                        if (thiefPower <= guardPower) {
-                            attackResults.push(`${blockMessage} Enemy Thief is destroyed by the guard's superior defense! (Block ${newGuardBlocks[blockingGuardIndex]}/3)`);
+                        if (attackerPower <= guardPower) {
+                            attackResults.push(`${blockMessage} Enemy ${enemyCard.name} is destroyed by the guard's superior defense!`);
                             newDestroyedCards.enemy[index] = true;
                             updatedEnemyLanes[index] = null;
                             
-                            // Handle Curse effect if thief is destroyed
+                            // Handle Curse effect if attacker is destroyed
                             if (enemyCard.curse) {
                                 const curseDamage = enemyCard.power || 1;
                                 damageTaken += curseDamage;
@@ -1249,108 +1189,56 @@ export function useGameLogic(userId, userData) {
                         } else {
                             attackResults.push(`${blockMessage} (Block ${newGuardBlocks[blockingGuardIndex]}/3)`);
                         }
-
+                        
                         if (newGuardBlocks[blockingGuardIndex] >= 3) {
                             attackResults.push(`Your Guard has retired after 3 blocks!`);
                             updatedPlayerLanes[blockingGuardIndex] = null;
                         }
-                        return;  // Important: return here to prevent further combat
-                    }
-                }
-
-                if (playerCard === null) {
-                    damageTaken += damage;
-                    attackResults.push(`Lane ${index + 1}: ${enemyCard.name} deals ${damage} direct damage!`);
-                } else {
-                    // Check for adjacent guard blocks
-                    const leftGuard = index > 0 && playerLaneCards[index - 1]?.guard && newGuardBlocks[index - 1] < 3;
-                    const rightGuard = index < 2 && playerLaneCards[index + 1]?.guard && newGuardBlocks[index + 1] < 3;
-                    const hasAdjacentGuard = leftGuard || rightGuard;
-
-                    // Handle Guard attribute or adjacent guard blocks
-                    if (playerCard.guard || hasAdjacentGuard) {
-                        let blockingGuardIndex = playerCard.guard ? index : (leftGuard ? index - 1 : index + 1);
-                        let blockingGuard = playerCard.guard ? playerCard : (leftGuard ? playerLaneCards[index - 1] : playerLaneCards[index + 1]);
-                        
-                        if (newGuardBlocks[blockingGuardIndex] < 3) {
-                            newGuardBlocks[blockingGuardIndex]++;
-                            setGuardAdjacentBlocks(newGuardBlocks);
-                            const blockMessage = playerCard.guard 
-                                ? `Lane ${index + 1}: Your Guard ${playerCard.name} blocks the attack!`
-                                : `Lane ${index + 1}: Your Guard from lane ${blockingGuardIndex + 1} blocks the attack!`;
-                            
-                            // Check if attacking card should be destroyed
-                            const attackerPower = enemyCard.power || 1;
-                            const guardPower = blockingGuard.power || 1;
-                            
-                            if (attackerPower <= guardPower) {
-                                attackResults.push(`${blockMessage} Enemy ${enemyCard.name} is destroyed by the guard's superior defense!`);
-                                newDestroyedCards.enemy[index] = true;
-                                updatedEnemyLanes[index] = null;
-                                
-                                // Handle Curse effect if attacker is destroyed
-                                if (enemyCard.curse) {
-                                    const curseDamage = enemyCard.power || 1;
-                                    damageTaken += curseDamage;
-                                    setPlayerLife(prev => Math.max(0, prev - curseDamage));
-                                    attackResults.push(`⚡ CURSE EFFECT: Enemy ${enemyCard.name} deals ${curseDamage} direct damage to you!`);
-                                }
-                            } else {
-                                attackResults.push(`${blockMessage} (Block ${newGuardBlocks[blockingGuardIndex]}/3)`);
-                            }
-                            
-                            if (newGuardBlocks[blockingGuardIndex] >= 3) {
-                                attackResults.push(`Your Guard has retired after 3 blocks!`);
-                                updatedPlayerLanes[blockingGuardIndex] = null;
-                            }
-                            return;  // Important: return here to prevent further combat
-                        }
-                    }
-
-                    const opponentPower = enemyCard.power;
-                    const playerPower = playerCard.power;
-                    const battleResult = `Lane ${index + 1}: ${enemyCard.name} (${opponentPower}) vs ${playerCard.name} (${playerPower})`;
-
-                    if (opponentPower > playerPower) {
-                        attackResults.push(`${battleResult} - Your card destroyed!`);
-                        newDestroyedCards.player[index] = true;
-                        updatedPlayerLanes[index] = null;
-                        
-                        if (playerCard.curse) {
-                            const curseDamage = playerCard.power || 1;
-                            damageTaken += curseDamage;
-                            setOpponentLife(prev => Math.max(0, prev - curseDamage));
-                            attackResults.push(`⚡ CURSE EFFECT: Your ${playerCard.name} deals ${curseDamage} direct damage to the opponent!`);
-                        }
-                    } else if (opponentPower < playerPower) {
-                        attackResults.push(`${battleResult} - Enemy card destroyed!`);
-                        newDestroyedCards.enemy[index] = true;
-                        updatedEnemyLanes[index] = null;
-                        
-                        if (enemyCard.curse) {
-                            const curseDamage = enemyCard.power || 1;
-                            damageTaken += curseDamage;
-                            setPlayerLife(prev => Math.max(0, prev - curseDamage));
-                            attackResults.push(`⚡ CURSE EFFECT: Enemy ${enemyCard.name} deals ${curseDamage} direct damage to you!`);
-                        }
                     } else {
-                        attackResults.push(`${battleResult} - Both cards destroyed in equal combat!`);
-                        newDestroyedCards.player[index] = true;
-                        newDestroyedCards.enemy[index] = true;
-                        updatedPlayerLanes[index] = null;
-                        updatedEnemyLanes[index] = null;
-                        
-                        if (playerCard.curse) {
-                            const curseDamage = playerCard.power || 1;
-                            damageTaken += curseDamage;
-                            setOpponentLife(prev => Math.max(0, prev - curseDamage));
-                            attackResults.push(`⚡ CURSE EFFECT: Your ${playerCard.name} deals ${curseDamage} direct damage to the opponent!`);
-                        }
-                        if (enemyCard.curse) {
-                            const curseDamage = enemyCard.power || 1;
-                            damageTaken += curseDamage;
-                            setPlayerLife(prev => Math.max(0, prev - curseDamage));
-                            attackResults.push(`⚡ CURSE EFFECT: Enemy ${enemyCard.name} deals ${curseDamage} direct damage to you!`);
+                        // Regular combat if no guard blocks
+                        const opponentPower = enemyCard.power || 1;
+                        const playerPower = playerCard.power || 1;
+                        const battleResult = `Lane ${index + 1}: ${enemyCard.name} (${opponentPower}) vs ${playerCard.name} (${playerPower})`;
+
+                        if (opponentPower > playerPower) {
+                            attackResults.push(`${battleResult} - Your card destroyed!`);
+                            newDestroyedCards.player[index] = true;
+                            updatedPlayerLanes[index] = null;
+                            
+                            if (playerCard.curse) {
+                                const curseDamage = playerCard.power || 1;
+                                setOpponentLife(prev => Math.max(0, prev - curseDamage));
+                                attackResults.push(`⚡ CURSE EFFECT: Your ${playerCard.name} deals ${curseDamage} direct damage to the opponent!`);
+                            }
+                        } else if (opponentPower < playerPower) {
+                            attackResults.push(`${battleResult} - Enemy card destroyed!`);
+                            newDestroyedCards.enemy[index] = true;
+                            updatedEnemyLanes[index] = null;
+                            
+                            if (enemyCard.curse) {
+                                const curseDamage = enemyCard.power || 1;
+                                damageTaken += curseDamage;
+                                setPlayerLife(prev => Math.max(0, prev - curseDamage));
+                                attackResults.push(`⚡ CURSE EFFECT: Enemy ${enemyCard.name} deals ${curseDamage} direct damage to you!`);
+                            }
+                        } else {
+                            attackResults.push(`${battleResult} - Both cards destroyed in equal combat!`);
+                            newDestroyedCards.player[index] = true;
+                            newDestroyedCards.enemy[index] = true;
+                            updatedPlayerLanes[index] = null;
+                            updatedEnemyLanes[index] = null;
+                            
+                            if (playerCard.curse) {
+                                const curseDamage = playerCard.power || 1;
+                                setOpponentLife(prev => Math.max(0, prev - curseDamage));
+                                attackResults.push(`⚡ CURSE EFFECT: Your ${playerCard.name} deals ${curseDamage} direct damage to the opponent!`);
+                            }
+                            if (enemyCard.curse) {
+                                const curseDamage = enemyCard.power || 1;
+                                damageTaken += curseDamage;
+                                setPlayerLife(prev => Math.max(0, prev - curseDamage));
+                                attackResults.push(`⚡ CURSE EFFECT: Enemy ${enemyCard.name} deals ${curseDamage} direct damage to you!`);
+                            }
                         }
                     }
                 }
@@ -1395,11 +1283,37 @@ export function useGameLogic(userId, userData) {
                 }
 
                 // Update stats after the round
-                setGameStats(prev => ({
-                    ...prev,
-                    totalDamageTaken: prev.totalDamageTaken + damageTaken,
-                    cardsDestroyed: prev.cardsDestroyed + cardsLostThisRound
-                }));
+                setGameStats(prev => {
+                    const newStats = {
+                        ...prev,
+                        totalDamageTaken: prev.totalDamageTaken + damageTaken,
+                        cardsDestroyed: prev.cardsDestroyed + cardsLostThisRound,
+                        guardBlocks: prev.guardBlocks + roundGuardBlocks
+                    };
+
+                    // Update MVP for damage blocked
+                    if (roundGuardBlocks > 0 && (!prev.mvpCard || roundGuardBlocks > prev.mvpCard.value)) {
+                        // Find the guard card that blocked the most damage
+                        let mvpGuard = null;
+                        let maxBlocks = 0;
+                        playerLaneCards.forEach(card => {
+                            if (card && card.guard && newGuardBlocks[playerLaneCards.indexOf(card)] > maxBlocks) {
+                                maxBlocks = newGuardBlocks[playerLaneCards.indexOf(card)];
+                                mvpGuard = card;
+                            }
+                        });
+
+                        if (mvpGuard) {
+                            newStats.mvpCard = {
+                                name: mvpGuard.name,
+                                value: roundGuardBlocks,
+                                type: 'block'
+                            };
+                        }
+                    }
+
+                    return newStats;
+                });
             }, 1000);
         }, 1000);
     };
@@ -1407,7 +1321,6 @@ export function useGameLogic(userId, userData) {
     // Handle guard adjacent blocking
     const handleGuardAdjacentBlock = (guardIndex, targetIndex) => {
         if (guardAdjacentBlocks[guardIndex]) {
-            setGameMessage("This Guard has already blocked an adjacent lane this phase!");
             return;
         }
 
@@ -1419,7 +1332,6 @@ export function useGameLogic(userId, userData) {
         if (playerCard) {
             const damage = playerCard.power || 1;
             setOpponentLife(prev => Math.max(0, prev - damage));
-            setGameMessage(`Guard in lane ${guardIndex + 1} blocked attack from lane ${targetIndex + 1}!`);
         }
 
         setShowGuardBlockModal(false);
@@ -1442,16 +1354,13 @@ export function useGameLogic(userId, userData) {
                 const opponentHasCreatures = enemyLaneCards.some(card => card !== null);
                 
                 if (opponentHasCreatures) {
-                    displayGameMessage("Opponent's Attack Phase begins!");
                     setOpponentAttackPhase(true);
                 } else {
-                    displayGameMessage("Opponent has no creatures left to attack with. Choose a card to retain.");
                     setTimeout(() => {
                         setShowRetainCardModal(true);
                     }, 1000);
                 }
             } else {
-                displayGameMessage("Battle Phase complete! Choose a card to retain for next round.");
                 setTimeout(() => {
                     setShowRetainCardModal(true);
                 }, 1000);
@@ -1471,16 +1380,13 @@ export function useGameLogic(userId, userData) {
                 const playerHasCreatures = playerLaneCards.some(card => card !== null);
                 
                 if (playerHasCreatures) {
-                    displayGameMessage("Your Attack Phase begins!");
                     setPlayerAttackPhase(true);
                 } else {
-                    displayGameMessage("You have no creatures left to attack with. Choose a card to retain.");
                     setTimeout(() => {
                         setShowRetainCardModal(true);
                     }, 1000);
                 }
             } else {
-                displayGameMessage("Battle Phase complete! Choose a card to retain for next round.");
                 setTimeout(() => {
                     setShowRetainCardModal(true);
                 }, 1000);
@@ -1492,7 +1398,6 @@ export function useGameLogic(userId, userData) {
     const handleRetainCard = (card) => {
         setRetainedCard(card);
         setShowRetainCardModal(false);
-        setGameMessage(`Retained ${card.name} for next round! You will draw 2 cards instead of 3.`);
         
         setTimeout(() => {
             prepareNextRound();
@@ -1502,7 +1407,6 @@ export function useGameLogic(userId, userData) {
     const handleCloseRetainModal = () => {
         setShowRetainCardModal(false);
         setRetainedCard(null);
-        setGameMessage("No card retained. Drawing full hand for next round.");
         
         setTimeout(() => {
             prepareNextRound();
@@ -1511,13 +1415,10 @@ export function useGameLogic(userId, userData) {
 
     // Prepare next round
     const prepareNextRound = () => {
-        console.log("Preparing next round. Battle complete:", battleComplete);
         if (battleComplete) return;
         
         const newRoundCount = roundCount + 1;
-        console.log("Starting round:", newRoundCount);
         
-        // Reset all game state
         setRoundCount(newRoundCount);
         setGamePhase('draw');
         setBattleInitiated(false);
@@ -1530,43 +1431,23 @@ export function useGameLogic(userId, userData) {
         setPlayerTurnCount(0);
         setOpponentTurnCount(0);
         
-        // Reset coin toss result before showing modal
         setCoinTossResult(null);
         
-        // Show coin toss modal
         setShowCoinTossModal(true);
-        setGameMessage(`Round ${newRoundCount} begins! Let's determine who goes first with a coin toss!`);
-
-        // Update stats after the round
-        setGameStats(prev => ({
-            ...prev,
-            roundsPlayed: prev.roundsPlayed + 1,
-            longestRound: Math.max(prev.longestRound, prev.currentRoundTurns),
-            currentRoundTurns: 0
-        }));
     };
 
     // Handle drawing new round hand
     const handleDrawNewRoundHand = () => {
-        console.log("Drawing new round hand");
-        console.log("Current remaining deck:", remainingDeck);
-        
         if (!remainingDeck || remainingDeck.length === 0) {
-            console.log("No cards left in deck");
-            setGameMessage("You have no cards left in your deck. Game over!");
             setBattleComplete(true);
             return;
         }
         
         const cardsToDraw = retainedCard ? 2 : 3;
-        console.log("Cards to draw:", cardsToDraw);
         
-        // Use the drawCards function instead of manual drawing
         const newHand = drawCards(cardsToDraw);
-        console.log("New hand drawn:", newHand);
         
         if (newHand.length === 0) {
-            setGameMessage("You have no cards left in your deck. Game over!");
             setBattleComplete(true);
             return;
         }
@@ -1584,21 +1465,12 @@ export function useGameLogic(userId, userData) {
         setShowNewRoundModal(false);
         setGamePhase('placement');
         
-        const playerCardCount = playerLaneCards.filter(card => card !== null).length;
-        const enemyCardCount = enemyLaneCards.filter(card => card !== null).length;
-        
         const playerFirst = coinTossResult === 'heads';
         
         setPlayerTurnCount(0);
         setOpponentTurnCount(0);
         
         setIsPlayerTurn(playerFirst);
-        
-        if (playerCardCount > 0 || enemyCardCount > 0) {
-            setGameMessage(`New round! ${playerCardCount} of your cards and ${enemyCardCount} enemy cards survived. ${playerFirst ? "You" : "Opponent"} goes first.`);
-        } else {
-            setGameMessage(`New round! ${playerFirst ? "You" : "Opponent"} goes first. Place cards in the lanes.`);
-        }
         
         if (!playerFirst) {
             setTimeout(handleOpponentPlacement, 1500);

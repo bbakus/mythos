@@ -13,6 +13,13 @@ function PaymentModal({ onClose }) {
     const [error, setError] = useState('');
     const [processing, setProcessing] = useState(false);
 
+    const handleOverlayClick = (e) => {
+        // Only close if the click was on the overlay itself, not the modal content
+        if (e.target.className === 'payment-modal-overlay') {
+            onClose(0);
+        }
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         
@@ -54,11 +61,11 @@ function PaymentModal({ onClose }) {
     ];
 
     return (
-        <div className="payment-modal-overlay">
-            <div className="payment-modal">
+        <div className="payment-modal-overlay" onClick={handleOverlayClick}>
+            <div className="payment-modal" onClick={e => e.stopPropagation()}>
+                <button className="close-button" onClick={() => onClose(0)}>×</button>
                 <div className="payment-modal-header">
                     <h2>Purchase Gems</h2>
-                    <button className="close-button" onClick={() => onClose(0)}>&times;</button>
                 </div>
 
                 <div className="gem-packages">

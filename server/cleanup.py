@@ -17,31 +17,29 @@ def clean_users():
             print("Creating test user")
             test_user = User(
                 username='testuser',
-                email='test@example.com'
-                # Let the validator handle the initial wallet value
+                email='test@example.com',
+                wallet=100
             )
-            test_user.password_hash = 'password123'
+            # Set password using the proper hashing method
+            test_user.password_hash = 'password'
+            print(f"Created test user with password hash: {test_user._password_hash}")
             db.session.add(test_user)
             db.session.commit()
         else:
             print(f"Found test user: {test_user.username}, wallet: {test_user.wallet}")
-            # Do not modify the wallet value
+            print(f"Current password hash: {test_user._password_hash}")
+            # Reset password to ensure it's correct
+            test_user.password_hash = 'password'
+            db.session.commit()
+            print(f"Updated password hash: {test_user._password_hash}")
         
-        # Delete all other users
-        users_to_delete = User.query.filter(User.username != 'testuser').all()
-        print(f'Found {len(users_to_delete)} users to delete')
+        # Get all users for verification
+        all_users = User.query.all()
+        print(f'\nTotal users in database: {len(all_users)}')
+        for user in all_users:
+            print(f'User: {user.username}, email: {user.email}, wallet: {user.wallet}')
         
-        for user in users_to_delete:
-            print(f'Deleting user: {user.username}')
-            db.session.delete(user)
-        
-        db.session.commit()
-        print('Database cleaned up')
-        
-        # Verify remaining users
-        remaining_users = User.query.all()
-        for user in remaining_users:
-            print(f'Remaining user: {user.username}, wallet: {user.wallet}')
+        print('\nDatabase cleanup complete!')
 
 if __name__ == '__main__':
     clean_users() 

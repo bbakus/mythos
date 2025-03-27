@@ -82,6 +82,9 @@ export default function Arena() {
             <div className="arena-background">
                 <img src="/assets/images/misc/game-board-6.png" alt="Arena Background" />
             </div>
+            <div className="arena-background-background">
+                <img src="/assets/images/misc/background-surface.png"/>
+            </div>
             <GameBoard
                 positionConfig={{
                     playerLane1: { top: '50%', left: '20%' },

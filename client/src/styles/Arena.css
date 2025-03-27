@@ -12,6 +12,13 @@
   overflow: hidden;
 }
 
+.arena-background-background{
+  width:80%;
+  height: auto;
+
+}
+
+
 .arena-background {
   position: absolute;
   top: 0;
@@ -66,64 +73,78 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  background: rgba(59, 43, 35, 0.7);
+  
   padding: 10px 20px;
   border-radius: 10px;
-  backdrop-filter: blur(3px);
+  
 }
+
 
 .enemy-stats {
   font-size: 20px;
   font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.7);
+  
   border-radius: 10px;
   padding: 12px 20px;
   margin-left: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border: 1px solid #ccc;
   color: white;
+  
 }
 
 .player-stats-container {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  padding: 15px 20px;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
-  color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border: 1px solid #ccc;
-  min-width: 250px;
 }
 
 .player-stats {
   display: flex;
-  gap: 20px;
-  font-size: 22px;
-  font-weight: bold;
+  flex-direction: row;
+  gap: 85px;
+  align-items: center;
+  justify-content: center;
 }
 
 .life-counter, .mana-counter, .deck-counter {
-  padding: 8px 15px;
-  border-radius: 5px;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 120px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 0;
+  margin: 0;
+  background-size: cover;
+  background-position: center;
 }
 
-.life-counter {
-  background-color: rgba(176, 0, 0, 0.6);
+.life-counter:hover, .mana-counter:hover, .deck-counter:hover {
+  transform: scale(1.1);
+  
 }
 
-.mana-counter {
-  background-color: rgba(0, 102, 204, 0.6);
-}
-
-.deck-counter {
-  background-color: rgba(0, 128, 0, 0.6);
+.life-counter::before, .mana-counter::before, .deck-counter::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  
+  transform: rotate(45deg);
+  pointer-events: none;
 }
 
 .game-message {
@@ -147,54 +168,76 @@
 .battlefield {
   position: relative;
   width: 100%;
-  height: 60vh;
+  height: 80vh;
   min-height: 400px;
   margin: 0;
   padding: 0;
   background-color: transparent;
 }
 
-.enemy-area, .player-area {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
 .battlefield-grid {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    gap: 15rem;
-    height: 70vh;
-    width: 72vw;
-    margin: 0 auto;
-    padding: 2rem;
-    box-sizing: border-box;
-    position: relative;
-    top: 12vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 5;
 }
 
 .enemy-lanes, .player-lanes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
-    justify-items: center;
-    align-items: center;
-    padding: 0 2rem;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .lane {
-    width: 180px;
-    height: 260px;
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(15, 15, 15, 0.6);
-    transition: all 0.3s ease;
-    z-index: 5;
-    position: relative;
-    margin: 0 auto;
+  width: 180px;
+  height: 260px;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(15, 15, 15, 0.6);
+  transition: all 0.3s ease;
+  position: fixed; /* Changed from absolute to fixed */
+  pointer-events: auto;
+  z-index: 5;
+}
+
+/* Fixed pixel positions instead of percentages */
+.enemy-lanes .lane:nth-child(1) {
+  top: 350px; /* Specific pixel values */
+  left: 47%; 
+  transform: translateX(-450px); /* Specific offset from center */
+}
+.enemy-lanes .lane:nth-child(2) {
+  top: 350px;
+  left: 50%;
+  transform: translateX(-90px); /* Center lane slightly adjusted if needed */
+}
+.enemy-lanes .lane:nth-child(3) {
+  top: 350px;
+  left: 53%;
+  transform: translateX(270px); /* Specific offset from center */
+}
+
+.player-lanes .lane:nth-child(1) {
+  bottom: 350px;
+  left: 47%;
+  transform: translateX(-450px);
+}
+.player-lanes .lane:nth-child(2) {
+  bottom: 350px;
+  left: 50%;
+  transform: translateX(-90px);
+}
+.player-lanes .lane:nth-child(3) {
+  bottom: 350px;
+  left: 53%;
+  transform: translateX(270px);
 }
 
 .lane.empty {
@@ -252,7 +295,7 @@
   color: #f8d8a8;
   padding: 5px;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 1rem;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -260,18 +303,6 @@
 
 .placed-card:hover .retract-hint {
   opacity: 1;
-}
-
-.card-stats {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 15px;
-  z-index: 10;
-  display: none;
 }
 
 
@@ -295,39 +326,11 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
-.card-details {
-  margin-top: 10px;
-  text-align: center;
-  width: 100%;
-}
-
-.card-name {
-  color: #f8d8a8;
-  font-weight: bold;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-
-.card-details-small {
-  position: absolute;
-  bottom: 30px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
-  display: none;
-}
-
 
 
 .player-hand {
   position: fixed;
-  bottom: 38vh;
+  bottom: 42vh;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -351,8 +354,8 @@
 }
 
 .hand-card {
-  width: 240px;
-  height: 340px;
+  width: 280px;
+  height: 400px;
   border-radius: 15px;
   overflow: hidden;
   position: relative;
@@ -369,24 +372,6 @@
   border-radius: 8px;
 }
 
-.card-name-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 8px;
-  text-align: center;
-}
-
-.card-name {
-  color: #f8d8a8;
-  font-size: 1.1rem;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .retain-button {
   width: 100%;
@@ -466,8 +451,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 95vw;
-  max-width: 1400px;
-  height: 600px;
+  max-width: 1600px;
+  height: 700px;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
   padding: 20px;
@@ -490,7 +475,7 @@
 .cards-container {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 40px;
   flex-wrap: wrap;
   overflow-y: auto;
   padding: 20px;
@@ -523,8 +508,6 @@
   transform: translateY(-2px);
 }
 
-
-
 .hand-card.dragging {
   opacity: 0.3;
   transform: scale(0.95);
@@ -546,12 +529,16 @@
   border: 2px dashed rgba(233, 69, 96, 0.7);
 }
 
-.intro-modal, .deck-selection-modal, .tutorial-modal {
+.intro-modal, .deck-selection-modal, .tutorial-modal, .battle-results-modal, .battle-phase-modal, .forfeit-modal, .retain-card-modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgba(20, 20, 20, 0.95);
+  background-image: url('../../public/assets/images/misc/modal-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 15px;
   padding: 40px;
   width: 80%;
@@ -565,7 +552,7 @@
 }
 
 .intro-modal h2 {
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   margin-bottom: 30px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
   background: linear-gradient(45deg, #f8d8a8, #ffb347);
@@ -574,7 +561,7 @@
 }
 
 .intro-modal p {
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   margin-bottom: 20px;
   opacity: 0.9;
   color: #e0d0b0;
@@ -627,7 +614,7 @@
 }
 
 .deck-selection-modal h2 {
-  font-size: 2.2rem;
+  font-size: 3rem;
   margin-bottom: 30px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
@@ -675,14 +662,14 @@
 }
 
 .deck-info h3 {
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   margin-bottom: 5px;
   color: #f8d8a8;
 }
 
 .deck-info p {
   color: #aaa;
-  font-size: 0.9rem;
+  font-size: 1.4rem;
 }
 
 .tutorial-modal {
@@ -693,7 +680,7 @@
 }
 
 .tutorial-modal h2 {
-  font-size: 2.2rem;
+  font-size: 3rem;
   margin-bottom: 30px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
   text-align: center;
@@ -702,7 +689,7 @@
 .tutorial-content {
   min-height: 300px;
   margin-bottom: 30px;
-  font-size: 1.25rem;
+  font-size: 1.8rem;
   line-height: 1.6;
   color: #e0d0b0;
 }
@@ -713,7 +700,7 @@
   border: none;
   padding: 12px 30px;
   border-radius: 30px;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   transition: all 0.3s;
   font-weight: bold;
@@ -747,7 +734,6 @@
   transform: translateY(-3px);
   box-shadow: 0 7px 15px rgba(0, 0, 0, 0.5);
 }
-
 
 .no-decks-container {
   display: flex;
@@ -808,13 +794,13 @@
 
 .message-display {
   position: fixed;
-  top: 32%;
+  top: 22%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
   color: #f8d8a8;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   background-color: rgba(0, 0, 0, 0.8);
@@ -846,7 +832,7 @@
 }
 
 .draw-hand-modal p {
-  font-size: 1.4rem;
+  font-size: 2.2rem;
   margin: 20px 0 30px;
   line-height: 1.5;
 }
@@ -872,16 +858,18 @@
 
 .opponent-stats-container {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: rgba(139, 0, 0, 0.7);
-  border-radius: 10px;
-  padding: 15px 20px;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
-  color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border: 1px solid #a00;
-  min-width: 250px;
+}
+
+.opponent-stats-container .player-stats {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+  align-items: center;
+  justify-content: center;
 }
 
 .active-turn {
@@ -900,7 +888,7 @@
 }
 
 .card-container.active-turn:hover {
-  transform: translateY(-20px) scale(1.05);
+  transform: translateY(-20px) scale(1.2);
   z-index: 56;
   box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
 }
@@ -943,7 +931,7 @@
 
 .pass-turn-container {
   position: fixed;
-  top: 61%;
+  top: 57%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 55;
@@ -1037,7 +1025,7 @@
 }
 
 .battle-results-modal h2 {
-  font-size: 2.8rem;
+  font-size: 3.2rem;
   margin-bottom: 25px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
   background: linear-gradient(45deg, #f8d8a8, #ffb347);
@@ -1095,7 +1083,7 @@
   margin-bottom: 12px;
   border-radius: 8px;
   background-color: rgba(50, 50, 50, 0.7);
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   line-height: 1.4;
 }
 
@@ -1105,7 +1093,7 @@
   border: 2px solid #f8d8a8;
   border-radius: 30px;
   padding: 15px 40px;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1216,6 +1204,8 @@
   margin-top: 15px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .forfeit-button {
@@ -1260,6 +1250,7 @@
 .forfeit-modal h2 {
   color: #e74c3c;
   margin-bottom: 15px;
+  font-size: 2.8rem;
 }
 
 .forfeit-actions {
@@ -1269,35 +1260,20 @@
   margin-top: 20px;
 }
 
-.confirm-forfeit {
+.confirm-forfeit, .cancel-forfeit {
   background-color: #c0392b;
   color: white;
-  padding: 10px 20px;
+  padding: 15px 30px;
   border: none;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 1.4rem;
 }
 
-.confirm-forfeit:hover {
+.confirm-forfeit:hover, .cancel-forfeit:hover {
   background-color: #e74c3c;
-  transform: translateY(-2px);
-}
-
-.cancel-forfeit {
-  background-color: #555;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.cancel-forfeit:hover {
-  background-color: #777;
   transform: translateY(-2px);
 }
 
@@ -1320,13 +1296,13 @@
 }
 
 .retain-card-modal h2 {
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   margin-bottom: 30px;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
 
 .retain-card-modal p {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   margin: 20px 0 30px;
   line-height: 1.5;
 }
@@ -1373,14 +1349,14 @@
 }
 
 .retain-card-info .card-name {
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: #f8d8a8;
 }
 
 .retain-card-info .card-cost,
 .retain-card-info .card-power {
-  font-size: 1rem;
+  font-size: 1.4rem;
   color: #aaa;
 }
 
@@ -1423,6 +1399,102 @@
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.2); opacity: 0.5; }
   100% { transform: scale(0); opacity: 0; }
+}
+
+.game-over-modal {
+  width: 60%;
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  color: white;
+  font-family: 'Cinzel', serif;
+  animation: fadeIn 1s ease-in;
+  background-color: rgba(20, 20, 20, 0.95);
+  background-image: url('../../public/assets/images/misc/modal-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(248, 216, 168, 0.3);
+  margin-bottom: 20px;
+}
+
+.game-over-modal.victory {
+  background-color: rgba(20, 20, 20, 0.95);
+  border: 2px solid rgba(160, 68, 255, 0.5);
+  box-shadow: 0 0 30px rgba(160, 68, 255, 0.3);
+}
+
+.game-over-modal.defeat {
+  background-color: rgba(20, 20, 20, 0.95);
+  border: 2px solid rgba(233, 69, 96, 0.5);
+  box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+}
+
+.game-over-modal h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  font-family: 'RomanAntique', 'Times New Roman', serif;
+}
+
+.victory h1 {
+  color: #a044ff;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+.defeat h1 {
+  color: #e94560;
+  text-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
+}
+
+.game-over-actions {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.play-again-button {
+  background: linear-gradient(135deg, #6a3093, #a044ff);
+  color: #f8d8a8;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  min-width: 120px;
+  font-family: 'RomanAntique', 'Times New Roman', serif;
+}
+
+.play-again-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 15px rgba(160, 68, 255, 0.5);
+}
+
+.return-now-button {
+  background: linear-gradient(135deg, #3e3e3e, #222222);
+  color: #f8d8a8;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  min-width: 120px;
+  font-family: 'RomanAntique', 'Times New Roman', serif;
+}
+
+.return-now-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.5);
 }
 
 

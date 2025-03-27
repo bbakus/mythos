@@ -4,9 +4,17 @@ import '../styles/PurchaseModal.css';
 const PurchaseModal = ({ isOpen, onClose, cardName, cardImage, multipleCards }) => {
   if (!isOpen) return null;
   
+  const handleOverlayClick = (e) => {
+    // Only close if the click was on the overlay itself, not the modal content
+    if (e.target.className === 'modal-overlay') {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="purchase-modal" onClick={e => e.stopPropagation()}>
+        <button className="close-button" onClick={onClose}>×</button>
         <div className="modal-content">
           <h2>Purchase Complete!</h2>
           <p>You bought <span className="card-name">{cardName}</span>!</p>
