@@ -24,8 +24,8 @@ services:
     buildCommand: |
       cd client
       rm -rf node_modules package-lock.json
-      npm install
-      npm install react-router-dom
+      npm cache clean --force
+      npm install --legacy-peer-deps
       npm run build
     startCommand: cd client && npm start
     envVars:
