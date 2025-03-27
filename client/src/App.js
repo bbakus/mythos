@@ -9,6 +9,9 @@ import Friends from './components/Friends';
 import FontLoader from './components/FontLoader';
 import './App.css';
 
+// Get API URL from environment variable
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+
 // Protected route component that redirects to login if not authenticated
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();

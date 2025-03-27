@@ -27,7 +27,7 @@ migrate = Migrate(app, db)
 # Configure CORS
 CORS(app, 
      resources={r"/*": {
-         "origins": ["http://localhost:3000"],
+         "origins": app.config['CORS_ORIGINS'],
          "supports_credentials": True,
          "allow_headers": ["Content-Type", "Authorization"],
          "methods": ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
