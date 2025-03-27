@@ -5,6 +5,13 @@ const app = express();
 // Disable host header validation
 app.disable('trust proxy');
 
+// Add CORS headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 // Serve static files from the React build directory
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -14,6 +21,8 @@ app.get('*', (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server is running on port ${port}`);
+const host = '0.0.0.0';
+
+app.listen(port, host, () => {
+  console.log(`Server is running on ${host}:${port}`);
 }); 

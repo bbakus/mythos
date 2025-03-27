@@ -33,8 +33,6 @@ services:
         value: https://mythos-backend.onrender.com
       - key: NODE_VERSION
         value: 18.0.0
-      - key: HOST
-        value: 0.0.0.0
 
 databases:
   - name: mythos-db
