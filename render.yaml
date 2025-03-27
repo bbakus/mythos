@@ -25,9 +25,9 @@ services:
     envVars:
       - key: REACT_APP_API_URL
         value: https://mythos-backend.onrender.com
-      - key: HOST
+      - key: REACT_APP_HOST
         value: 0.0.0.0
-      - key: DANGEROUSLY_DISABLE_HOST_CHECK
+      - key: REACT_APP_DANGEROUSLY_DISABLE_HOST_CHECK
         value: true
 
 databases:
