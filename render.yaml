@@ -23,17 +23,18 @@ services:
     env: node
     buildCommand: |
       cd client
+      rm -rf node_modules package-lock.json
       npm install
+      npm install react-router-dom
       npm run build
-    startCommand: |
-      cd client
-      npm install -g serve
-      serve -s build -l $PORT
+    startCommand: cd client && npm start
     envVars:
       - key: REACT_APP_API_URL
         value: https://mythos-backend.onrender.com
       - key: NODE_VERSION
         value: 18.0.0
+      - key: HOST
+        value: 0.0.0.0
 
 databases:
   - name: mythos-db
