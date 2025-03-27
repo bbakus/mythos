@@ -20,7 +20,13 @@ services:
 
   - type: static
     name: mythos-frontend
-    buildCommand: cd client && echo "DANGEROUSLY_DISABLE_HOST_CHECK=true" > .env && echo "WDS_SOCKET_PORT=0" >> .env && npm install && npm run build
+    buildCommand: |
+      cd client
+      export NODE_VERSION=18.17.0
+      export NODE_ENV=production
+      export CI=false
+      npm install
+      npm run build
     staticPublishPath: client/build
     routes:
       - type: rewrite
