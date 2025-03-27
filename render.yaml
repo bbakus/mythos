@@ -20,12 +20,15 @@ services:
 
   - type: web
     name: mythos-frontend
-    env: static
+    env: node
     buildCommand: |
       cd client
       npm install
       CI=false npm run build
-    staticPublishPath: client/build
+    startCommand: |
+      cd client
+      npm install -g serve
+      serve -s build -l $PORT
     envVars:
       - key: REACT_APP_API_URL
         value: https://mythos-backend.onrender.com
